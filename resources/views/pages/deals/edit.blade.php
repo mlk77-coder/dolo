@@ -1,0 +1,15 @@
+@extends('layouts.admin')
+@section('content')
+    <x-common.page-breadcrumb pageTitle="Edit Deal" />
+    <x-common.component-card title="Edit Deal">
+        <form action="{{ route('deals.update', $deal) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf @method('PUT')
+            @include('pages.deals.partials.form', ['deal' => $deal, 'merchants' => $merchants, 'categories' => $categories])
+            <div class="flex gap-4">
+                <button type="submit" class="px-6 py-2 bg-brand-500 text-white rounded-lg">Update</button>
+                <a href="{{ route('deals.index') }}" class="px-6 py-2 bg-gray-200 rounded-lg">Cancel</a>
+            </div>
+        </form>
+    </x-common.component-card>
+@endsection
+
