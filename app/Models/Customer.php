@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The table associated with the model.
@@ -26,8 +27,12 @@ class Customer extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'username',
+        'phone',
         'email',
+        'date_of_birth',
+        'gender',
         'password',
         'avatar',
         'is_admin',
@@ -56,7 +61,9 @@ class Customer extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'date_of_birth' => 'date',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 

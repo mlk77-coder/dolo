@@ -1,0 +1,78 @@
+ How to Test with Postman:
+I've created a comprehensive guide: POSTMAN_API_TESTING_GUIDE.md
+
+Quick Start:
+
+Start your server:
+
+php artisan serve
+Register a new user:
+
+URL: POST http://localhost:8000/api/register
+Headers:
+Content-Type: application/json
+Accept: application/json
+Body (JSON):
+{
+    "name": "Ahmad",
+    "surname": "Hassan",
+    "phone": "9123456789",
+    "email": "ahmad@example.com",
+    "date_of_birth": "1990-01-15",
+    "gender": "male",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+Login with email:
+
+URL: POST http://localhost:8000/api/login
+Body (JSON):
+{
+    "credential": "ahmad@example.com",
+    "password": "password123"
+}
+Login with phone:
+
+URL: POST http://localhost:8000/api/login
+Body (JSON):
+{
+    "credential": "9123456789",
+    "password": "password123"
+}
+Get user profile (authenticated):
+
+URL: GET http://localhost:8000/api/user
+Headers:
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: application/json
+📱 Phone Number Rules:
+✅ Valid: 9123456789, 9987654321 (starts with 9, 10 digits total)
+❌ Invalid: 1234567890 (doesn't start with 9), 912345678 (only 9 digits)
+
+📄 Documentation Files:
+POSTMAN_API_TESTING_GUIDE.md - Complete Postman setup and testing guide
+test-api.md - Quick PowerShell test commands
+.kiro/specs/user-api-authentication/IMPLEMENTATION_SUMMARY.md - Full implementation details
+🎯 Response Format:
+All responses follow this consistent format:
+
+Success:
+
+{
+    "success": true,
+    "message": "Registration successful",
+    "data": {
+        "user": {...},
+        "token": "1|abc123..."
+    }
+}
+Error:
+
+{
+    "success": false,
+    "message": "Validation failed",
+    "errors": {
+        "phone": ["The phone number must start with 9..."]
+    }
+}
+The API is fully functional and ready to test! Open the POSTMAN_API_TESTING_GUIDE.md file for detailed step-by-step instructions on testing with Postman. 🚀
