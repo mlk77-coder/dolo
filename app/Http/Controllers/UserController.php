@@ -19,7 +19,11 @@ class UserController extends Controller
 
         // Filter by role
         if ($request->has('role') && $request->role) {
-            $query->where('role', $request->role);
+            if ($request->role === 'admin') {
+                $query->where('is_admin', true);
+            } elseif ($request->role === 'user') {
+                $query->where('is_admin', false);
+            }
         }
 
         $users = $query->latest()->paginate(15);
@@ -43,7 +47,11 @@ class UserController extends Controller
         }
 
         if ($request->has('role') && $request->role) {
-            $query->where('role', $request->role);
+            if ($request->role === 'admin') {
+                $query->where('is_admin', true);
+            } elseif ($request->role === 'user') {
+                $query->where('is_admin', false);
+            }
         }
 
         $users = $query->latest()->get();

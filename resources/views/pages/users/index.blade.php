@@ -21,7 +21,7 @@
                 <thead class="bg-gray-50"><tr><th class="px-5 py-3 text-left">Name</th><th class="px-5 py-3 text-left">Email</th><th class="px-5 py-3 text-left">Role</th><th class="px-5 py-3 text-left">Orders</th><th class="px-5 py-3 text-left">Actions</th></tr></thead>
                 <tbody>
                     @forelse($users as $user)
-                        <tr class="border-b"><td class="px-5 py-4">{{ $user->name }}</td><td class="px-5 py-4">{{ $user->email }}</td><td class="px-5 py-4"><span class="px-2 py-1 rounded text-xs {{ $user->role == 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100' }}">{{ ucfirst($user->role) }}</span></td><td class="px-5 py-4">{{ $user->orders_count ?? $user->orders()->count() }}</td><td class="px-5 py-4"><a href="{{ route('users.show', $user) }}" class="text-blue-500">View</a></td></tr>
+                        <tr class="border-b"><td class="px-5 py-4">{{ $user->name }}</td><td class="px-5 py-4">{{ $user->email }}</td><td class="px-5 py-4"><span class="px-2 py-1 rounded text-xs {{ $user->is_admin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100' }}">{{ $user->is_admin ? 'Admin' : 'User' }}</span></td><td class="px-5 py-4">{{ $user->orders_count ?? $user->orders()->count() }}</td><td class="px-5 py-4"><a href="{{ route('users.show', $user) }}" class="text-blue-500">View</a></td></tr>
                     @empty
                         <tr><td colspan="5" class="px-5 py-8 text-center">No users found</td></tr>
                     @endforelse

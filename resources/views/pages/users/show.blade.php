@@ -5,7 +5,7 @@
         <div class="flex justify-between mb-6"><h2 class="text-xl font-bold">{{ $user->name }}</h2><a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-200 rounded-lg">Back</a></div>
         <div class="grid md:grid-cols-2 gap-6 mb-6">
             <div><p class="text-gray-500 text-sm">Email</p><p class="font-medium">{{ $user->email }}</p></div>
-            <div><p class="text-gray-500 text-sm">Role</p><p class="font-medium">{{ ucfirst($user->role) }}</p></div>
+            <div><p class="text-gray-500 text-sm">Role</p><p class="font-medium">{{ $user->is_admin ? 'Admin' : 'User' }}</p></div>
             <div><p class="text-gray-500 text-sm">Total Orders</p><p class="font-medium">{{ $user->orders->count() }}</p></div>
             <div><p class="text-gray-500 text-sm">Registered</p><p class="font-medium">{{ $user->created_at->format('M d, Y') }}</p></div>
         </div>

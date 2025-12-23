@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'), // Default password: password
-            'role' => 'admin',
+            'is_admin' => true,
         ]);
 
         // Create regular users
-        User::factory()->count(5)->create(['role' => 'user']);
+        User::factory()->count(5)->create(['is_admin' => false]);
 
         // Seed other entities
         $this->call([
