@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Doli</title>
+    <title>Login - {{ config('app.name') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -39,7 +39,7 @@
             </div>
             
             <div class="absolute bottom-8 left-12 text-white text-xs opacity-75">
-                © {{ date('Y') }} Doli. All rights reserved.
+                © {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
             </div>
         </div>
 
@@ -47,7 +47,7 @@
         <div class="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-12 bg-white">
             <div class="w-full max-w-md mx-auto">
                 <!-- Brand Name -->
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">Doli</h2>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ config('app.name') }}</h2>
                 
                 <!-- Welcome Heading -->
                 <h3 class="text-2xl font-semibold text-gray-900 mb-4">Welcome Back!</h3>

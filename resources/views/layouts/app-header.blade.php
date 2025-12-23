@@ -53,7 +53,7 @@
 
             <!-- Logo (mobile only) -->
             <a href="/" class="xl:hidden">
-                <h1 class="text-xl font-bold text-brand-600 dark:text-brand-400">Doli</h1>
+                <h1 class="text-xl font-bold text-brand-600 dark:text-brand-400">{{ config('app.name') }}</h1>
             </a>
 
             <!-- Application Menu Toggle (mobile only) -->

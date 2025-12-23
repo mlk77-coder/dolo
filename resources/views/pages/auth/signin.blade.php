@@ -146,7 +146,7 @@
                     <x-common.common-grid-shape/>
                     <div class="flex max-w-xs flex-col items-center">
                         <a href="/" class="mb-4 block">
-                            <h1 class="text-4xl font-bold text-white">Doli</h1>
+                            <h1 class="text-4xl font-bold text-white">{{ config('app.name') }}</h1>
                         </a>
                         <p class="text-center text-gray-400">
                             Free and Open-Source Tailwind CSS Admin Dashboard Template

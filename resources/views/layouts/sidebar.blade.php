@@ -70,7 +70,7 @@
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'justify-center' : 'justify-start'">
         <a href="/" class="flex items-center">
             <h1 x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                class="text-2xl font-bold text-brand-600 dark:text-brand-400 transition-opacity duration-200">Doli</h1>
+                class="text-2xl font-bold text-brand-600 dark:text-brand-400 transition-opacity duration-200">{{ config('app.name') }}</h1>
             <span x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen"
                 class="text-xl font-bold text-brand-600 dark:text-brand-400">D</span>
         </a>
