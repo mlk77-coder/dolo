@@ -32,6 +32,9 @@ class UpdateDealRequest extends FormRequest
             'video' => ['nullable', 'file', 'mimes:mp4,avi,mov,wmv,flv,webm', 'max:10240'], // 10MB max
             'city' => ['nullable', 'string', 'max:255'],
             'area' => ['nullable', 'string', 'max:255'],
+            'location_name' => ['nullable', 'string', 'max:255'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],

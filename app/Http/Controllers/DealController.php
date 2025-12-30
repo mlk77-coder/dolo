@@ -224,7 +224,7 @@ class DealController extends Controller
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
             
-            fputcsv($file, ['ID', 'Title (EN)', 'Title (AR)', 'SKU', 'Merchant', 'Category', 'City', 'Area', 'Original Price', 'Discounted Price', 'Discount %', 'Buyer Counter', 'Status', 'Featured', 'Start Date', 'End Date', 'Created At']);
+            fputcsv($file, ['ID', 'Title (EN)', 'Title (AR)', 'SKU', 'Merchant', 'Category', 'City', 'Area', 'Location Name', 'Latitude', 'Longitude', 'Original Price', 'Discounted Price', 'Discount %', 'Buyer Counter', 'Status', 'Featured', 'Start Date', 'End Date', 'Created At']);
             
             foreach ($deals as $deal) {
                 fputcsv($file, [
@@ -236,6 +236,9 @@ class DealController extends Controller
                     $deal->category->name ?? '',
                     $deal->city ?? '',
                     $deal->area ?? '',
+                    $deal->location_name ?? '',
+                    $deal->latitude ?? '',
+                    $deal->longitude ?? '',
                     $deal->original_price,
                     $deal->discounted_price,
                     $deal->discount_percentage ?? '',
