@@ -38,9 +38,20 @@ Route::middleware(['auth'])->group(function () {
     
     // Resource routes
     Route::resource('categories', CategoryController::class);
-    Route::resource('deals', DealController::class);
+    
+    // Deals - specific routes BEFORE resource
+    Route::get('deals/map-location', function() {
+        return view('pages.deals.map-location');
+    })->name('deals.map-location');
+    Route::get('deals/{deal}/view-location', function(\App\Models\Deal $deal) {
+        return view('pages.deals.view-location', compact('deal'));
+    })->name('deals.view-location');
     Route::post('deals/update-sort-order', [DealController::class, 'updateSortOrder'])->name('deals.update-sort-order');
     Route::get('deals/export/csv', [DealController::class, 'exportCsv'])->name('deals.export-csv');
+    
+    // Deals resource route
+    Route::resource('deals', DealController::class);
+    
     Route::resource('deal-images', DealImageController::class)->only(['store', 'destroy']);
     Route::resource('advertisements', AdvertisementController::class);
     Route::resource('mobile-carousel-images', MobileCarouselImageController::class);

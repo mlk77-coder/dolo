@@ -34,9 +34,9 @@
     <div>
         <label class="block mb-2">Category</label>
         <select name="category_id" class="w-full px-4 py-2 border rounded-lg">
-            <option value="">Select</option>
+            <option value="">Select Category</option>
             @foreach($categories as $category)
-                <option value="{{ $category->id }}" @selected(old('category_id', $deal->category_id ?? '') == $category->id)>{{ $category->name }}</option>
+                <option value="{{ $category->id }}" @selected(old('category_id', $deal->category_id ?? '') == $category->id)>{{ $category->name_en }} - {{ $category->name_ar }}</option>
             @endforeach
         </select>
         @error('category_id')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
@@ -70,99 +70,128 @@
     </div>
     <div>
         <label class="block mb-2">Area</label>
-        <input type="text" name="area" value="{{ old('area', $deal->area ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Area within the city">
+        <input type="text" name="area" id="area-field" value="{{ old('area', $deal->area ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Area within the city" readonly>
         @error('area')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 </div>
 
-<!-- Deal Location Section (Optional) -->
-<div class="mt-8 border-t-2 border-gray-300 pt-8 bg-gray-50 -mx-6 px-6 py-6 rounded-lg w-full" 
-     x-data="dealLocationMap()"
-     x-init="init()">
-    <div class="flex items-center gap-2 mb-2">
-        <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-        </svg>
-        <h3 class="text-xl font-bold text-gray-800">Deal Location in Damascus (Optional)</h3>
-    </div>
-    <p class="text-sm text-gray-600 mb-4">Select only if the deal has a physical location in Damascus city</p>
-    
-    <div class="grid md:grid-cols-2 gap-6 mb-4">
+<!-- Deal Location Section (Button to Map Page) -->
+<div class="mt-8 border-t-2 border-gray-300 pt-8 -mx-6 px-6 py-6 rounded-lg bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div class="flex items-center gap-3 mb-3">
+        <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+        </div>
         <div>
-            <label class="block mb-2">Location Name (Optional)</label>
-            <input 
-                type="text" 
-                name="location_name" 
-                x-model="locationName"
-                value="{{ old('location_name', $deal->location_name ?? '') }}" 
-                class="w-full px-4 py-2 border rounded-lg" 
-                placeholder="e.g., Main Branch Damascus">
-            @error('location_name')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
+            <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                Deal Location in Damascus
+                <span class="text-sm font-normal text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">Optional</span>
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">📍 Select a physical location for this deal on the map</p>
         </div>
-        <div class="flex items-end gap-2">
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="space-y-2">
+                <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    Location Name
+                    <span class="text-xs text-gray-400 font-normal">(Optional)</span>
+                </label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        name="location_name" 
+                        id="location-name-field"
+                        value="{{ old('location_name', $deal->location_name ?? '') }}" 
+                        class="w-full px-4 py-3 pl-11 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700 font-medium focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200" 
+                        placeholder="e.g., Main Branch Damascus"
+                        readonly>
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                </div>
+                @error('location_name')<p class="text-red-500 text-xs mt-1 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>{{ $message }}</p>@enderror
+            </div>
+            <div class="space-y-2">
+                <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    Coordinates
+                </label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="coordinates-display"
+                        class="w-full px-4 py-3 pl-11 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700 font-mono text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200" 
+                        placeholder="Not selected yet"
+                        readonly>
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden inputs for coordinates -->
+        <input type="hidden" name="latitude" id="latitude-field" value="{{ old('latitude', $deal->latitude ?? '') }}">
+        <input type="hidden" name="longitude" id="longitude-field" value="{{ old('longitude', $deal->longitude ?? '') }}">
+        
+        <div class="flex flex-wrap gap-3">
             <button 
                 type="button" 
-                @click="searchAreaOnMap()"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                id="choose-location-btn"
+                class="flex-1 min-w-[200px] group relative px-6 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                <div class="relative flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    <span class="text-lg">Choose Deal Location on Map</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </div>
+            </button>
+            
+            <button 
+                type="button" 
+                id="clear-location-btn"
+                class="px-6 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
-                Search Area
-            </button>
-            <button 
-                type="button" 
-                @click="clearLocation()"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-                Clear
+                Clear Location
             </button>
         </div>
+        
+        <div id="location-status" class="mt-4"></div>
     </div>
-
-    <!-- Search Box -->
-    <div class="mb-4">
-        <label class="block mb-2 text-sm font-medium">Search Location in Damascus (Arabic or English)</label>
-        <div class="flex gap-2">
-            <input 
-                type="text" 
-                x-model="searchQuery"
-                @keyup.enter="searchLocation()"
-                class="flex-1 px-4 py-2 border rounded-lg" 
-                placeholder="e.g., المزة، الشعلان، Mazzeh, Shaalan, Old Damascus, Umayyad Mosque...">
-            <button 
-                type="button" 
-                @click="searchLocation()"
-                :disabled="searchLoading"
-                class="px-6 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition disabled:opacity-50">
-                <span x-show="!searchLoading">Search</span>
-                <span x-show="searchLoading">...</span>
-            </button>
+    
+    <!-- Info Box -->
+    <div class="mt-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl p-4 flex items-start gap-3">
+        <svg class="w-6 h-6 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="text-sm text-blue-800">
+            <p class="font-semibold mb-1">💡 How to add location:</p>
+            <ul class="space-y-1 text-blue-700">
+                <li>• Click the button above to open the interactive map</li>
+                <li>• Search for areas in Damascus (Arabic or English)</li>
+                <li>• Click on the map to place a marker</li>
+                <li>• Confirm and return to save the location</li>
+            </ul>
         </div>
-        <p x-show="searchError" x-text="searchError" class="text-red-500 text-xs mt-1"></p>
-        <p x-show="searchLoading" class="text-blue-500 text-xs mt-1">Searching Damascus...</p>
-        <p x-show="searchSuccess" x-text="searchSuccess" class="text-green-600 text-xs mt-1"></p>
-    </div>
-
-    <!-- Map Container -->
-    <div class="w-full bg-white rounded-lg border-2 border-gray-300 overflow-hidden shadow-lg">
-        <div id="deal-map" style="height: 450px; width: 100%; min-width: 100%;"></div>
-    </div>
-    
-    <p class="text-xs text-gray-500 mt-2">
-        <strong>Tip:</strong> Click on the map to select a location, or use the search box above to find specific areas in Damascus.
-    </p>
-    
-    <!-- Hidden inputs for coordinates -->
-    <input type="hidden" name="latitude" id="latitude" x-model="latitude" value="{{ old('latitude', $deal->latitude ?? '') }}">
-    <input type="hidden" name="longitude" id="longitude" x-model="longitude" value="{{ old('longitude', $deal->longitude ?? '') }}">
-    
-    <!-- Coordinates Display -->
-    <div x-show="latitude && longitude" class="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-        <p class="text-sm text-green-800">
-            <strong>Selected Coordinates:</strong> 
-            Latitude: <span x-text="latitude"></span>, 
-            Longitude: <span x-text="longitude"></span>
-        </p>
     </div>
 </div>
 
@@ -376,225 +405,264 @@ function imageGallery() {
     }
 }
 
-function dealLocationMap() {
-    return {
-        map: null,
-        marker: null,
-        latitude: '{{ old('latitude', $deal->latitude ?? '') }}',
-        longitude: '{{ old('longitude', $deal->longitude ?? '') }}',
-        locationName: '{{ old('location_name', $deal->location_name ?? '') }}',
-        searchQuery: '',
-        searchLoading: false,
-        searchError: '',
-        searchSuccess: '',
-        areaField: '{{ old('area', $deal->area ?? '') }}',
+// Auto-save functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const AUTOSAVE_KEY = 'dealFormAutoSave';
+    const AUTOSAVE_TIMESTAMP_KEY = 'dealFormAutoSaveTime';
+    let autoSaveTimeout = null;
+    let autoSaveIndicator = null;
+    
+    // Create auto-save indicator
+    function createAutoSaveIndicator() {
+        const indicator = document.createElement('div');
+        indicator.id = 'autosave-indicator';
+        indicator.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transition-all duration-300 opacity-0';
+        indicator.style.transform = 'translateY(-20px)';
+        document.body.appendChild(indicator);
+        return indicator;
+    }
+    
+    autoSaveIndicator = createAutoSaveIndicator();
+    
+    // Show auto-save status
+    function showAutoSaveStatus(message, type = 'success') {
+        const colors = {
+            success: 'bg-green-500 text-white',
+            saving: 'bg-blue-500 text-white',
+            error: 'bg-red-500 text-white'
+        };
         
-        init() {
-            // Wait for DOM to be fully rendered
-            this.$nextTick(() => {
-                // Additional wait to ensure container has final dimensions
-                setTimeout(() => {
-                    this.initializeMap();
-                }, 100);
-            });
-        },
+        autoSaveIndicator.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transition-all duration-300 ${colors[type]}`;
+        autoSaveIndicator.innerHTML = `
+            <div class="flex items-center gap-2">
+                ${type === 'saving' ? '<svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>' : ''}
+                ${type === 'success' ? '<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                <span class="text-sm font-medium">${message}</span>
+            </div>
+        `;
+        autoSaveIndicator.style.opacity = '1';
+        autoSaveIndicator.style.transform = 'translateY(0)';
         
-        initializeMap() {
-            if (!window.L) {
-                console.error('Leaflet not loaded');
-                return;
-            }
-            
-            // Default center: Damascus
-            const defaultLat = 33.5146;
-            const defaultLng = 36.2776;
-            
-            // Initialize map with proper options
-            this.map = L.map('deal-map', {
-                center: [defaultLat, defaultLng],
-                zoom: 12,
-                zoomControl: true,
-                scrollWheelZoom: true,
-                preferCanvas: true
-            });
-            
-            // Add OpenStreetMap tiles with proper attribution
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 19,
-                minZoom: 10
-            }).addTo(this.map);
-            
-            // CRITICAL: Force Leaflet to recalculate size after container finishes rendering
-            // This fixes the "small map" issue caused by Leaflet calculating size too early
+        if (type === 'success') {
             setTimeout(() => {
-                this.map.invalidateSize();
-            }, 200);
-            
-            // Additional resize for extra stability (dashboard/dynamic layouts)
-            setTimeout(() => {
-                this.map.invalidateSize();
-            }, 500);
-            
-            // Final resize to ensure full width is applied
-            setTimeout(() => {
-                this.map.invalidateSize();
-            }, 1000);
-            
-            // If coordinates exist, show marker
-            if (this.latitude && this.longitude) {
-                const lat = parseFloat(this.latitude);
-                const lng = parseFloat(this.longitude);
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    this.addMarker(lat, lng);
-                    this.map.setView([lat, lng], 15);
-                }
-            }
-            
-            // Add click listener
-            this.map.on('click', (e) => {
-                this.addMarker(e.latlng.lat, e.latlng.lng);
-                this.searchSuccess = 'Location selected on map';
-                setTimeout(() => { this.searchSuccess = ''; }, 3000);
-            });
-            
-            // Handle window resize to keep map properly sized
-            window.addEventListener('resize', () => {
-                if (this.map) {
-                    this.map.invalidateSize();
-                }
-            });
-        },
-        
-        addMarker(lat, lng) {
-            // Remove existing marker if any
-            if (this.marker) {
-                this.map.removeLayer(this.marker);
-            }
-            
-            // Add new marker with custom popup
-            this.marker = L.marker([lat, lng]).addTo(this.map);
-            
-            if (this.locationName) {
-                this.marker.bindPopup(this.locationName).openPopup();
-            }
-            
-            // Update coordinates
-            this.latitude = lat.toFixed(7);
-            this.longitude = lng.toFixed(7);
-        },
-        
-        async searchLocation() {
-            if (!this.searchQuery.trim()) {
-                this.searchError = 'Please enter a location to search';
-                return;
-            }
-            
-            this.searchLoading = true;
-            this.searchError = '';
-            this.searchSuccess = '';
-            
-            try {
-                // Use Nominatim API to search within Damascus
-                const query = encodeURIComponent(this.searchQuery + ', Damascus, Syria');
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=5&bounded=1&viewbox=36.2,33.6,36.4,33.4`,
-                    {
-                        headers: {
-                            'Accept-Language': 'ar,en'
-                        }
-                    }
-                );
-                
-                const results = await response.json();
-                
-                if (results && results.length > 0) {
-                    const result = results[0];
-                    const lat = parseFloat(result.lat);
-                    const lng = parseFloat(result.lon);
-                    
-                    // Add marker and center map
-                    this.addMarker(lat, lng);
-                    this.map.setView([lat, lng], 16);
-                    
-                    this.searchSuccess = `Found: ${result.display_name}`;
-                    setTimeout(() => { this.searchSuccess = ''; }, 5000);
-                } else {
-                    this.searchError = 'Location not found in Damascus. Try different keywords.';
-                }
-            } catch (error) {
-                console.error('Search error:', error);
-                this.searchError = 'Search failed. Please try again.';
-            } finally {
-                this.searchLoading = false;
-            }
-        },
-        
-        async searchAreaOnMap() {
-            // Get area from the area input field
-            const areaInput = document.querySelector('input[name="area"]');
-            if (areaInput && areaInput.value.trim()) {
-                this.searchQuery = areaInput.value.trim();
-                await this.searchLocation();
-            } else {
-                this.searchError = 'Please enter an area name in the Area field first';
-                setTimeout(() => { this.searchError = ''; }, 3000);
-            }
-        },
-        
-        clearLocation() {
-            // Remove marker
-            if (this.marker) {
-                this.map.removeLayer(this.marker);
-                this.marker = null;
-            }
-            
-            // Clear coordinates and location name
-            this.latitude = '';
-            this.longitude = '';
-            this.locationName = '';
-            this.searchQuery = '';
-            this.searchError = '';
-            this.searchSuccess = '';
-            
-            // Reset map view to Damascus
-            this.map.setView([33.5146, 36.2776], 12);
+                autoSaveIndicator.style.opacity = '0';
+                autoSaveIndicator.style.transform = 'translateY(-20px)';
+            }, 2000);
         }
     }
-}
+    
+    // Save form data to localStorage
+    function autoSaveFormData() {
+        if (!form) return;
+        
+        showAutoSaveStatus('Saving...', 'saving');
+        
+        const formData = {};
+        const inputs = form.querySelectorAll('input:not([type="file"]), select, textarea');
+        
+        inputs.forEach(input => {
+            if (input.name && input.name !== '') {
+                if (input.type === 'checkbox') {
+                    formData[input.name] = input.checked;
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        formData[input.name] = input.value;
+                    }
+                } else {
+                    formData[input.name] = input.value;
+                }
+            }
+        });
+        
+        try {
+            localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(formData));
+            localStorage.setItem(AUTOSAVE_TIMESTAMP_KEY, new Date().toISOString());
+            console.log('Auto-saved form data:', formData);
+            showAutoSaveStatus('Draft saved', 'success');
+        } catch (e) {
+            console.error('Auto-save failed:', e);
+            showAutoSaveStatus('Save failed', 'error');
+        }
+    }
+    
+    // Restore form data from localStorage
+    function restoreAutoSavedData() {
+        const savedData = localStorage.getItem(AUTOSAVE_KEY);
+        const savedTime = localStorage.getItem(AUTOSAVE_TIMESTAMP_KEY);
+        
+        if (savedData && savedTime) {
+            const timeDiff = (new Date() - new Date(savedTime)) / 1000 / 60; // minutes
+            
+            // Only restore if saved within last 24 hours
+            if (timeDiff < 1440) {
+                console.log('Found auto-saved data from', Math.round(timeDiff), 'minutes ago');
+                
+                const formData = JSON.parse(savedData);
+                
+                Object.keys(formData).forEach(name => {
+                    const input = form.querySelector(`[name="${name}"]`);
+                    
+                    if (input) {
+                        if (input.type === 'checkbox') {
+                            input.checked = formData[name];
+                        } else if (input.type === 'radio') {
+                            if (input.value === formData[name]) {
+                                input.checked = true;
+                            }
+                        } else {
+                            input.value = formData[name];
+                        }
+                    }
+                });
+                
+                // Show notification
+                const notification = document.createElement('div');
+                notification.className = 'mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg';
+                notification.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-semibold text-blue-800">Draft Restored</p>
+                                <p class="text-xs text-blue-600 mt-1">Your previous work was automatically restored (saved ${Math.round(timeDiff)} minutes ago)</p>
+                            </div>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-blue-400 hover:text-blue-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                form.insertBefore(notification, form.firstChild);
+            }
+        }
+    }
+    
+    // Trigger auto-save on input change
+    if (form) {
+        form.addEventListener('input', function(e) {
+            // Debounce auto-save
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                autoSaveFormData();
+            }, 1000); // Save 1 second after user stops typing
+        });
+        
+        form.addEventListener('change', function(e) {
+            // Immediate save for select/checkbox changes
+            if (e.target.tagName === 'SELECT' || e.target.type === 'checkbox') {
+                clearTimeout(autoSaveTimeout);
+                autoSaveFormData();
+            }
+        });
+    }
+    
+    // Restore auto-saved data on page load
+    restoreAutoSavedData();
+    
+    // Clear auto-save on successful form submission
+    form.addEventListener('submit', function() {
+        localStorage.removeItem(AUTOSAVE_KEY);
+        localStorage.removeItem(AUTOSAVE_TIMESTAMP_KEY);
+        console.log('Form submitted, auto-save cleared');
+    });
+});
+
+// Location button functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const chooseLocationBtn = document.getElementById('choose-location-btn');
+    const clearLocationBtn = document.getElementById('clear-location-btn');
+    const locationNameField = document.getElementById('location-name-field');
+    const areaField = document.getElementById('area-field');
+    const latitudeField = document.getElementById('latitude-field');
+    const longitudeField = document.getElementById('longitude-field');
+    const coordinatesDisplay = document.getElementById('coordinates-display');
+    const locationStatus = document.getElementById('location-status');
+    
+    // Load location data from session storage on page load
+    function loadLocationData() {
+        const locationData = sessionStorage.getItem('dealLocation');
+        if (locationData) {
+            console.log('Loading location data...');
+            const data = JSON.parse(locationData);
+            
+            if (data.location_name) {
+                locationNameField.value = data.location_name;
+            }
+            if (data.area) {
+                areaField.value = data.area;
+            }
+            if (data.latitude && data.longitude) {
+                latitudeField.value = data.latitude;
+                longitudeField.value = data.longitude;
+                coordinatesDisplay.value = `${data.latitude}, ${data.longitude}`;
+                
+                locationStatus.innerHTML = `
+                    <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-r-xl shadow-sm animate-fade-in">
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-green-800">✓ Location Successfully Selected!</p>
+                                <p class="text-xs text-green-700 mt-1">
+                                    ${data.location_name ? '<strong>' + data.location_name + '</strong> - ' : ''}
+                                    Coordinates: ${data.latitude}, ${data.longitude}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Clear location data after loading
+            sessionStorage.removeItem('dealLocation');
+            console.log('Location data loaded and cleared from session');
+        }
+    }
+    
+    // Load location data on page load
+    loadLocationData();
+    
+    // Choose location button
+    if (chooseLocationBtn) {
+        chooseLocationBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Save current form URL for return
+            sessionStorage.setItem('dealFormReturnUrl', window.location.href);
+            console.log('Return URL saved:', window.location.href);
+            
+            // Note: Form data is already auto-saved via the auto-save feature above
+            // Redirect to map page
+            window.location.href = '{{ route("deals.map-location") }}';
+        });
+    }
+    
+    // Clear location button
+    if (clearLocationBtn) {
+        clearLocationBtn.addEventListener('click', function() {
+            locationNameField.value = '';
+            areaField.value = '';
+            latitudeField.value = '';
+            longitudeField.value = '';
+            coordinatesDisplay.value = '';
+            locationStatus.innerHTML = '';
+            
+            // Clear session storage
+            sessionStorage.removeItem('dealLocation');
+        });
+    }
+});
 </script>
 @endpush
 
 @push('styles')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-      crossorigin=""/>
-<style>
-    /* Ensure map container takes full width */
-    #deal-map {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        display: block !important;
-    }
-    
-    /* Fix Leaflet container sizing */
-    .leaflet-container {
-        width: 100% !important;
-        height: 100% !important;
-    }
-    
-    /* Ensure parent containers don't restrict width */
-    #deal-map .leaflet-pane,
-    #deal-map .leaflet-map-pane {
-        width: 100% !important;
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-        crossorigin=""></script>
 @endpush
 

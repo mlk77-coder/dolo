@@ -47,23 +47,32 @@
                 <p class="font-medium">{{ $deal->area ?? '—' }}</p>
             </div>
             @if($deal->location_name || ($deal->latitude && $deal->longitude))
-                <div class="md:col-span-2 mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div class="flex items-center gap-2 mb-2">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <p class="text-gray-700 font-semibold">Deal Location</p>
+                <div class="md:col-span-2 mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-blue-500 rounded-lg">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800">Deal Location Available</p>
+                                @if($deal->location_name)
+                                    <p class="text-sm text-gray-600">{{ $deal->location_name }}</p>
+                                @endif
+                                @if($deal->latitude && $deal->longitude)
+                                    <p class="text-xs text-gray-500 font-mono">{{ $deal->latitude }}, {{ $deal->longitude }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        <a href="{{ route('deals.view-location', $deal) }}" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                            View Location on Map
+                        </a>
                     </div>
-                    @if($deal->location_name)
-                        <p class="text-gray-600 mb-2"><strong>Location Name:</strong> {{ $deal->location_name }}</p>
-                    @endif
-                    @if($deal->latitude && $deal->longitude)
-                        <p class="text-gray-600 text-sm mb-3">
-                            <strong>Coordinates:</strong> {{ $deal->latitude }}, {{ $deal->longitude }}
-                        </p>
-                        <div id="deal-location-map" style="height: 300px; width: 100%;" class="rounded-lg border-2 border-blue-300"></div>
-                    @endif
                 </div>
             @endif
             <div>
@@ -175,40 +184,4 @@
         </div>
     </x-common.component-card>
 @endsection
-
-@if($deal->latitude && $deal->longitude)
-    @push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-          crossorigin=""/>
-    @endpush
-
-    @push('scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-            crossorigin=""></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const lat = {{ $deal->latitude }};
-            const lng = {{ $deal->longitude }};
-            
-            // Initialize map
-            const map = L.map('deal-location-map').setView([lat, lng], 15);
-            
-            // Add OpenStreetMap tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 19
-            }).addTo(map);
-            
-            // Add marker
-            const marker = L.marker([lat, lng]).addTo(map);
-            
-            @if($deal->location_name)
-                marker.bindPopup('<strong>{{ $deal->location_name }}</strong>').openPopup();
-            @endif
-        });
-    </script>
-    @endpush
-@endif
 
