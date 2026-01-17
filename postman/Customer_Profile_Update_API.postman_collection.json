@@ -1,0 +1,426 @@
+{
+	"info": {
+		"_postman_id": "customer-profile-update-api-002",
+		"name": "Customer Profile API (with Update)",
+		"description": "Complete API endpoints for customer profile, order history, and profile updates",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John\",\n    \"surname\": \"Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"date_of_birth\": \"1990-01-15\",\n    \"gender\": \"male\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Register a new customer account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"        console.log(\"Token saved:\", jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"credential\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Login with email or phone number"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": "Logout and revoke current access token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Profile",
+			"item": [
+				{
+					"name": "Get Customer Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Get authenticated customer profile with order history"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile (JSON)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John\",\n    \"surname\": \"Smith\",\n    \"email\": \"john.smith@example.com\",\n    \"username\": \"johnsmith\",\n    \"date_of_birth\": \"1990-01-15\",\n    \"gender\": \"male\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Update customer profile (name, email, username, etc.)\n\nNote: Phone number cannot be updated as it's unique identifier"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile with Avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "John",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Smith",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "john.smith@example.com",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Update profile with avatar image upload\n\nUse form-data to upload avatar file"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"password123\",\n    \"password\": \"newpassword123\",\n    \"password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Change customer password\n\nRequires:\n- current_password\n- password (new password)\n- password_confirmation"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Name and Email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jane\",\n    \"surname\": \"Doe\",\n    \"email\": \"jane.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Update only name and email (partial update)\n\nYou can update any combination of fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order History (Paginated)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/order-history?per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"order-history"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15"
+								}
+							]
+						},
+						"description": "Get paginated order history"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

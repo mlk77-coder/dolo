@@ -76,3 +76,29 @@ Error:
     }
 }
 The API is fully functional and ready to test! Open the POSTMAN_API_TESTING_GUIDE.md file for detailed step-by-step instructions on testing with Postman. 🚀
+
+
+
+
+
+
+### 6. Logout
+**POST** `/api/logout`
+
+Logout and revoke current access token.
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Response (200):**
+```json
+{
+    "success": true,
+    "message": "Logout successful"
+}
+```
+
+---

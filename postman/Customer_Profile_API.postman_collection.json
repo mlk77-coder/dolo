@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "customer-profile-api-001",
+		"name": "Customer Profile & Order History API",
+		"description": "API endpoints for customer profile and order history",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John\",\n    \"surname\": \"Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"date_of_birth\": \"1990-01-15\",\n    \"gender\": \"male\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Register a new customer account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save token to environment variable",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"        console.log(\"Token saved:\", jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"credential\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Login with email or phone number"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": "Logout and revoke current access token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Profile",
+			"item": [
+				{
+					"name": "Get Customer Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
+						},
+						"description": "Get authenticated customer profile with:\n- Name, email, phone\n- Total orders count\n- Last 10 order history\n- Latest order details\n- Created at timestamp"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/customer/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"customer",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Customer profile retrieved successfully\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"John\",\n        \"surname\": \"Doe\",\n        \"full_name\": \"John Doe\",\n        \"username\": \"johndoe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"+1234567890\",\n        \"date_of_birth\": \"1990-01-15\",\n        \"gender\": \"male\",\n        \"avatar\": \"http://localhost:8000/storage/avatars/user.jpg\",\n        \"is_admin\": false,\n        \"created_at\": \"2025-01-15 10:30:00\",\n        \"created_at_human\": \"2 days ago\",\n        \"orders_count\": 5,\n        \"total_orders\": 5,\n        \"order_history\": [\n            {\n                \"id\": 10,\n                \"order_number\": \"ORD-ABC123XYZ\",\n                \"quantity\": 2,\n                \"total_price\": 150.00,\n                \"payment_method\": \"credit_card\",\n                \"status\": \"completed\",\n                \"qr_code\": \"QR123456\",\n                \"pin_code\": \"1234\",\n                \"coupon_code\": null,\n                \"deal\": {\n                    \"id\": 5,\n                    \"title_en\": \"50% Off Restaurant Deal\",\n                    \"title_ar\": \"خصم 50٪ على المطعم\",\n                    \"original_price\": 100.00,\n                    \"discounted_price\": 50.00,\n                    \"discount_percentage\": 50.00\n                },\n                \"merchant\": {\n                    \"id\": 3,\n                    \"business_name\": \"Best Restaurant\",\n                    \"contact_email\": \"contact@restaurant.com\",\n                    \"contact_phone\": \"+1234567890\"\n                },\n                \"created_at\": \"2025-01-17 14:20:00\",\n                \"created_at_human\": \"2 hours ago\",\n                \"updated_at\": \"2025-01-17 14:25:00\"\n            }\n        ],\n        \"latest_order\": {\n            \"id\": 10,\n            \"order_number\": \"ORD-ABC123XYZ\",\n            \"quantity\": 2,\n            \"total_price\": 150.00,\n            \"payment_method\": \"credit_card\",\n            \"status\": \"completed\",\n            \"created_at\": \"2025-01-17 14:20:00\",\n            \"created_at_human\": \"2 hours ago\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Order History (Paginated)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/order-history?per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"order-history"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Number of orders per page (default: 15)"
+								}
+							]
+						},
+						"description": "Get paginated order history for authenticated customer"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/customer/order-history?per_page=15",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"customer",
+										"order-history"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "15"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Order history retrieved successfully\",\n    \"data\": {\n        \"orders\": [\n            {\n                \"id\": 10,\n                \"order_number\": \"ORD-ABC123XYZ\",\n                \"quantity\": 2,\n                \"total_price\": 150.00,\n                \"payment_method\": \"credit_card\",\n                \"status\": \"completed\",\n                \"qr_code\": \"QR123456\",\n                \"pin_code\": \"1234\",\n                \"coupon_code\": null,\n                \"deal\": {\n                    \"id\": 5,\n                    \"title_en\": \"50% Off Restaurant Deal\",\n                    \"title_ar\": \"خصم 50٪ على المطعم\",\n                    \"original_price\": 100.00,\n                    \"discounted_price\": 50.00,\n                    \"discount_percentage\": 50.00\n                },\n                \"merchant\": {\n                    \"id\": 3,\n                    \"business_name\": \"Best Restaurant\",\n                    \"contact_email\": \"contact@restaurant.com\",\n                    \"contact_phone\": \"+1234567890\"\n                },\n                \"created_at\": \"2025-01-17 14:20:00\",\n                \"created_at_human\": \"2 hours ago\",\n                \"updated_at\": \"2025-01-17 14:25:00\"\n            }\n        ],\n        \"pagination\": {\n            \"total\": 25,\n            \"per_page\": 15,\n            \"current_page\": 1,\n            \"last_page\": 2,\n            \"from\": 1,\n            \"to\": 15\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Basic User Info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Get basic authenticated user information (without order history)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

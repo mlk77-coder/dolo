@@ -1,0 +1,90 @@
+**2. Get Profile:**
+```bash
+curl -X GET http://localhost:8000/api/customer/profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Accept: application/json"
+
+ Get Customer Profile ⭐
+**GET** `/api/customer/profile`
+
+Get authenticated customer profile with order statistics and history.
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Response (200):**
+```json
+{
+    "success": true,
+    "message": "Customer profile retrieved successfully",
+    "data": {
+        "id": 1,
+        "name": "John",
+        "surname": "Doe",
+        "full_name": "John Doe",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "phone": "+1234567890",
+        "date_of_birth": "1990-01-15",
+        "gender": "male",
+        "avatar": "http://localhost:8000/storage/avatars/user.jpg",
+        "is_admin": false,
+        "created_at": "2025-01-15 10:30:00",
+        "created_at_human": "2 days ago",
+        "orders_count": 5,
+        "total_orders": 5,
+        "order_history": [
+            {
+                "id": 10,
+                "order_number": "ORD-ABC123XYZ",
+                "quantity": 2,
+                "total_price": 150.00,
+                "payment_method": "credit_card",
+                "status": "completed",
+                "qr_code": "QR123456",
+                "pin_code": "1234",
+                "coupon_code": null,
+                "deal": {
+                    "id": 5,
+                    "title_en": "50% Off Restaurant Deal",
+                    "title_ar": "خصم 50٪ على المطعم",
+                    "original_price": 100.00,
+                    "discounted_price": 50.00,
+                    "discount_percentage": 50.00
+                },
+                "merchant": {
+                    "id": 3,
+                    "business_name": "Best Restaurant",
+                    "contact_email": "contact@restaurant.com",
+                    "contact_phone": "+1234567890"
+                },
+                "created_at": "2025-01-17 14:20:00",
+                "created_at_human": "2 hours ago",
+                "updated_at": "2025-01-17 14:25:00"
+            }
+        ],
+        "latest_order": {
+            "id": 10,
+            "order_number": "ORD-ABC123XYZ",
+            "quantity": 2,
+            "total_price": 150.00,
+            "payment_method": "credit_card",
+            "status": "completed",
+            "created_at": "2025-01-17 14:20:00",
+            "created_at_human": "2 hours ago"
+        }
+    }
+}
+```
+
+**What You Get:**
+- ✅ Customer name, email, phone
+- ✅ Total number of orders
+- ✅ Last 10 orders with full details
+- ✅ Latest order information
+- ✅ Created at timestamp (human readable)
+
+---
