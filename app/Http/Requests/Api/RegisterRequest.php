@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'regex:/^9\d{9}$/', // Must start with 9 and be exactly 10 digits
+                'regex:/^9\d{8}$/', // Must start with 9 and be exactly 9 digits (Syrian format)
                 'unique:customers,phone'
             ],
             'email' => ['nullable', 'email', 'max:255', 'unique:customers,email'],
@@ -47,7 +47,7 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.regex' => 'The phone number must start with 9 and be exactly 10 digits long.',
+            'phone.regex' => 'The phone number must be a Syrian number: 9 digits starting with 9 (e.g., 912345678).',
             'phone.unique' => 'This phone number is already registered.',
             'email.unique' => 'This email address is already registered.',
             'date_of_birth.before' => 'The date of birth must be in the past.',
