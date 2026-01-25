@@ -13,12 +13,11 @@
         </div>
 
         <form method="GET" class="mb-6 flex flex-col md:flex-row gap-4">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by code, subject, or customer..." class="flex-1 px-4 py-2 border rounded-lg">
-            <select name="category" class="px-4 py-2 border rounded-lg">
-                <option value="">All Categories</option>
-                @foreach(['food', 'shopping', 'entertainment', 'travel', 'other'] as $cat)
-                    <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
-                @endforeach
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by code or subject..." class="flex-1 px-4 py-2 border rounded-lg">
+            <select name="status" class="px-4 py-2 border rounded-lg">
+                <option value="">All Status</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
             </select>
             <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-lg">Filter</button>
             <a href="{{ route('codes.index') }}" class="px-6 py-2 bg-gray-200 rounded-lg">Clear</a>
@@ -29,10 +28,11 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-5 py-3 text-left">ID</th>
-                        <th class="px-5 py-3 text-left">Customer</th>
                         <th class="px-5 py-3 text-left">Subject</th>
-                        <th class="px-5 py-3 text-left">Category</th>
                         <th class="px-5 py-3 text-left">Code</th>
+                        <th class="px-5 py-3 text-left">Discount Amount</th>
+                        <th class="px-5 py-3 text-left">Valid Until</th>
+                        <th class="px-5 py-3 text-left">Status</th>
                         <th class="px-5 py-3 text-left">Image</th>
                         <th class="px-5 py-3 text-left">Created</th>
                         <th class="px-5 py-3 text-left">Actions</th>
@@ -42,14 +42,35 @@
                     @forelse($codes as $code)
                         <tr class="border-b border-gray-100">
                             <td class="px-5 py-4">#{{ $code->id }}</td>
-                            <td class="px-5 py-4">{{ $code->customer->name ?? '—' }}</td>
                             <td class="px-5 py-4 font-medium">{{ $code->subject }}</td>
-                            <td class="px-5 py-4">{{ ucfirst($code->category ?? '—') }}</td>
                             <td class="px-5 py-4">
                                 @if($code->code)
                                     <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-mono">{{ $code->code }}</span>
                                 @else
                                     —
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                @if($code->discount_amount)
+                                    <span class="font-semibold text-green-600">${{ number_format($code->discount_amount, 2) }}</span>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                @if($code->valid_to)
+                                    <span class="text-sm {{ $code->valid_to->isPast() ? 'text-red-600' : 'text-gray-700' }}">
+                                        {{ $code->valid_to->format('M d, Y') }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400 text-sm">No expiry</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                @if($code->is_active)
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">Active</span>
+                                @else
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-sm">Inactive</span>
                                 @endif
                             </td>
                             <td class="px-5 py-4">
@@ -62,17 +83,17 @@
                             <td class="px-5 py-4">{{ $code->created_at->format('M d, Y') }}</td>
                             <td class="px-5 py-4">
                                 <div class="flex gap-2">
-                                    <a href="{{ route('codes.show', $code) }}" class="text-blue-500">View</a>
-                                    <a href="{{ route('codes.edit', $code) }}" class="text-yellow-500">Edit</a>
+                                    <a href="{{ route('codes.show', $code) }}" class="text-blue-500 hover:text-blue-700">View</a>
+                                    <a href="{{ route('codes.edit', $code) }}" class="text-yellow-500 hover:text-yellow-700">Edit</a>
                                     <form action="{{ route('codes.destroy', $code) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-500">Delete</button>
+                                        <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="px-5 py-8 text-center">No codes found</td></tr>
+                        <tr><td colspan="8" class="px-5 py-8 text-center text-gray-500">No codes found</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -80,4 +101,3 @@
         <div class="mt-6">{{ $codes->links() }}</div>
     </x-common.component-card>
 @endsection
-

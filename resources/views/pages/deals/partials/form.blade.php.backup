@@ -180,7 +180,6 @@
             <button 
                 type="button" 
                 id="choose-location-btn"
-                onclick="openLocationModal()"
                 class="flex-1 min-w-[200px] group relative px-6 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                 <div class="relative flex items-center justify-center gap-3">
@@ -197,7 +196,6 @@
             <button 
                 type="button" 
                 id="clear-location-btn"
-                onclick="clearLocation()"
                 class="px-6 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -666,19 +664,62 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load location data on page load
     loadLocationData();
     
-    /* OLD CODE COMMENTED OUT - NOW USING MODAL APPROACH
     // Choose location button
     if (chooseLocationBtn) {
         console.log('Attaching click handler to choose location button');
         chooseLocationBtn.addEventListener('click', function(e) {
             console.log('Choose location button clicked!');
             e.preventDefault();
-            // ... old code removed ...
+            
+            // Create a hidden form to submit data to save-draft route
+            const mainForm = document.querySelector('form');
+            if (mainForm) {
+                // Create temporary form
+                const tempForm = document.createElement('form');
+                tempForm.method = 'POST';
+                tempForm.action = '{{ route("deals.save-draft") }}';
+                tempForm.style.display = 'none';
+                
+                // Add CSRF token
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+                tempForm.appendChild(csrfInput);
+                
+                // Copy all form data except files
+                const inputs = mainForm.querySelectorAll('input:not([type="file"]), select, textarea');
+                inputs.forEach(input => {
+                    if (input.name && input.name !== '') {
+                        const clonedInput = document.createElement('input');
+                        clonedInput.type = 'hidden';
+                        clonedInput.name = input.name;
+                        
+                        if (input.type === 'checkbox') {
+                            clonedInput.value = input.checked ? '1' : '0';
+                        } else if (input.type === 'radio') {
+                            if (input.checked) {
+                                clonedInput.value = input.value;
+                            } else {
+                                return; // Skip unchecked radios
+                            }
+                        } else {
+                            clonedInput.value = input.value;
+                        }
+                        
+                        tempForm.appendChild(clonedInput);
+                    }
+                });
+                
+                // Append form to body and submit
+                document.body.appendChild(tempForm);
+                console.log('Submitting form data to server...');
+                tempForm.submit();
+            }
         });
     } else {
         console.error('Choose location button not found!');
     }
-    */
     
     // Clear location button
     if (clearLocationBtn) {

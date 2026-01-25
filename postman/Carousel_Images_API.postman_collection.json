@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "carousel-images-api-001",
+		"name": "Carousel Images API",
+		"description": "API endpoints for mobile carousel images - dynamic and manageable from dashboard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Carousel Images",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/carousel",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"carousel"
+					]
+				},
+				"description": "Get all active carousel images sorted by sort_order.\n\n**Features:**\n- Public endpoint (no authentication required)\n- Returns only active carousel images\n- Sorted by sort_order (ascending) then created_at (descending)\n- Dynamic - images can be changed anytime from dashboard\n\n**Response includes:**\n- id\n- title\n- description\n- image (full URL)\n- image_url (storage path)\n- link_url (if exists)\n- sort_order\n- status (active/inactive)\n- is_active (boolean)\n- created_at"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/carousel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carousel"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Carousel images retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"title\": \"Welcome to Bee Order\",\n            \"description\": \"Order your favorite food from the best restaurants\",\n            \"image\": \"http://127.0.0.1:8000/storage/carousel/image1.jpg\",\n            \"image_url\": \"carousel/image1.jpg\",\n            \"link_url\": \"https://play.google.com/store/apps/details?id=com.beeorder.customer\",\n            \"sort_order\": 1,\n            \"status\": \"active\",\n            \"is_active\": true,\n            \"created_at\": \"2026-01-22 10:30:00\"\n        },\n        {\n            \"id\": 2,\n            \"title\": \"Special Offers\",\n            \"description\": \"Get 20% off on your first order\",\n            \"image\": \"http://127.0.0.1:8000/storage/carousel/image2.jpg\",\n            \"image_url\": \"carousel/image2.jpg\",\n            \"link_url\": null,\n            \"sort_order\": 2,\n            \"status\": \"active\",\n            \"is_active\": true,\n            \"created_at\": \"2026-01-22 10:35:00\"\n        },\n        {\n            \"id\": 3,\n            \"title\": \"Fast Delivery\",\n            \"description\": \"We deliver in 30 minutes or less\",\n            \"image\": \"http://127.0.0.1:8000/storage/carousel/image3.jpg\",\n            \"image_url\": \"carousel/image3.jpg\",\n            \"link_url\": \"https://beeorder.com/delivery\",\n            \"sort_order\": 3,\n            \"status\": \"active\",\n            \"is_active\": true,\n            \"created_at\": \"2026-01-22 10:40:00\"\n        }\n    ]\n}"
+				},
+				{
+					"name": "Empty Response (No Active Images)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/carousel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carousel"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Carousel images retrieved successfully\",\n    \"data\": []\n}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		}
+	]
+}

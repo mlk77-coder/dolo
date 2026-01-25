@@ -46,6 +46,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('deals/{deal}/view-location', function(\App\Models\Deal $deal) {
         return view('pages.deals.view-location', compact('deal'));
     })->name('deals.view-location');
+    
+    // COMMENTED OUT - Using modal approach instead of page navigation
+    // Route::post('deals/save-draft', [DealController::class, 'saveDraft'])->name('deals.save-draft');
+    
     Route::post('deals/update-sort-order', [DealController::class, 'updateSortOrder'])->name('deals.update-sort-order');
     Route::get('deals/export/csv', [DealController::class, 'exportCsv'])->name('deals.export-csv');
     

@@ -52,8 +52,27 @@ class DealController extends Controller
     {
         $categories = Category::all();
         $merchants = Merchant::all();
+        
+        // Draft functionality commented out - using modal approach instead
+        // $draft = session('deal_draft', []);
+        // return view('pages.deals.create', compact('categories', 'merchants', 'draft'));
+        
         return view('pages.deals.create', compact('categories', 'merchants'));
     }
+
+    /* COMMENTED OUT - OLD APPROACH WITH PAGE NAVIGATION
+    public function saveDraft(Request $request)
+    {
+        // Save all form data to session
+        session(['deal_draft' => $request->all()]);
+        
+        // Save the return URL (where to go back after map)
+        session(['deal_form_return_url' => url()->previous()]);
+        
+        // Redirect to location picker
+        return redirect()->route('deals.map-location');
+    }
+    */
 
     public function store(StoreDealRequest $request)
     {
@@ -82,6 +101,9 @@ class DealController extends Controller
                 ]);
             }
         }
+
+        // Draft clearing commented out - not using draft approach anymore
+        // session()->forget('deal_draft');
 
         return redirect()->route('deals.index')->with('success', 'Deal created successfully.');
     }

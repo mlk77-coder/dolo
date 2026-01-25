@@ -1,0 +1,253 @@
+## API Endpoints
+
+### 1. Get All Categories
+**GET** `/api/categories`
+- Public endpoint (no authentication required)
+- Returns all categories with deal counts
+- Sorted by name_en (ascending)
+
+### 2. Get Specific Category
+**GET** `/api/categories/{id}`
+- Public endpoint (no authentication required)
+- Returns specific category by ID with deal count
+- Returns 404 if category not found
+
+## Response Structure
+
+```json
+{
+    "success": true,
+    "message": "Categories retrieved successfully",
+    "data": [
+        {
+            "id": 1,
+            "name_en": "Food & Restaurants",
+            "name_ar": "الطعام والمطاعم",
+            "slug": "food-restaurants",
+            "deals_count": 25,
+            "products_count": 25,
+            "created_at": "2026-01-22 10:30:00"
+        },
+        {
+            "id": 2,
+            "name_en": "Beauty & Spa",
+            "name_ar": "التجميل والسبا",
+            "slug": "beauty-spa",
+            "deals_count": 15,
+            "products_count": 15,
+            "created_at": "2026-01-22 10:35:00"
+        }
+    ]
+}
+```
+
+
+
+{
+	"info": {
+		"_postman_id": "categories-api-001",
+		"name": "Categories API",
+		"description": "API endpoints for categories with deal counts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/categories",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"categories"
+					]
+				},
+				"description": "Get all categories with deal counts.\n\n**Features:**\n- Public endpoint (no authentication required)\n- Returns all categories\n- Includes deal count for each category\n- Sorted by name_en (ascending)\n\n**Response includes:**\n- id\n- name_en (English name)\n- name_ar (Arabic name)\n- slug\n- deals_count (number of deals in category)\n- products_count (alias for deals_count)\n- created_at"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categories"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Categories retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name_en\": \"Food & Restaurants\",\n            \"name_ar\": \"الطعام والمطاعم\",\n            \"slug\": \"food-restaurants\",\n            \"deals_count\": 25,\n            \"products_count\": 25,\n            \"created_at\": \"2026-01-22 10:30:00\"\n        },\n        {\n            \"id\": 2,\n            \"name_en\": \"Beauty & Spa\",\n            \"name_ar\": \"التجميل والسبا\",\n            \"slug\": \"beauty-spa\",\n            \"deals_count\": 15,\n            \"products_count\": 15,\n            \"created_at\": \"2026-01-22 10:35:00\"\n        },\n        {\n            \"id\": 3,\n            \"name_en\": \"Entertainment\",\n            \"name_ar\": \"الترفيه\",\n            \"slug\": \"entertainment\",\n            \"deals_count\": 10,\n            \"products_count\": 10,\n            \"created_at\": \"2026-01-22 10:40:00\"\n        },\n        {\n            \"id\": 4,\n            \"name_en\": \"Shopping\",\n            \"name_ar\": \"التسوق\",\n            \"slug\": \"shopping\",\n            \"deals_count\": 0,\n            \"products_count\": 0,\n            \"created_at\": \"2026-01-22 10:45:00\"\n        }\n    ]\n}"
+				},
+				{
+					"name": "Empty Response (No Categories)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categories"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Categories retrieved successfully\",\n    \"data\": []\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Category by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/categories/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"categories",
+						"1"
+					]
+				},
+				"description": "Get a specific category by ID with deal count.\n\n**Features:**\n- Public endpoint (no authentication required)\n- Returns category details with deal count\n- Returns 404 if category not found\n\n**Usage:**\n- Get details for a specific category\n- Check how many deals are in a category"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Category retrieved successfully\",\n    \"data\": {\n        \"id\": 1,\n        \"name_en\": \"Food & Restaurants\",\n        \"name_ar\": \"الطعام والمطاعم\",\n        \"slug\": \"food-restaurants\",\n        \"deals_count\": 25,\n        \"products_count\": 25,\n        \"created_at\": \"2026-01-22 10:30:00\"\n    }\n}"
+				},
+				{
+					"name": "Category Not Found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"999"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"Category not found\"\n}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		}
+	]
+}

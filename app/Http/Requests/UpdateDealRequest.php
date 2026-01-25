@@ -24,6 +24,7 @@ class UpdateDealRequest extends FormRequest
             'discounted_price' => ['required', 'numeric', 'min:0', 'lte:original_price'],
             'discount_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'buyer_counter' => ['nullable', 'integer', 'min:0'],
+            'quantity' => ['nullable', 'integer', 'min:0'],
             'show_buyer_counter' => ['boolean'],
             'show_savings_percentage' => ['boolean'],
             'description' => ['nullable', 'string'],

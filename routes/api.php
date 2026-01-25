@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\CarouselController;
+use App\Http\Controllers\Api\CodeController;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +22,17 @@ use App\Http\Controllers\Api\CustomerController;
 // Public authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Public carousel images (no authentication required)
+Route::get('/carousel', [CarouselController::class, 'index']);
+
+// Public discount codes (no authentication required)
+Route::get('/codes', [CodeController::class, 'index']);
+Route::get('/codes/{code}', [CodeController::class, 'show']);
+
+// Public categories (no authentication required)
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {

@@ -342,8 +342,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sessionStorage.setItem('dealLocation', JSON.stringify(locationData));
 
-        // Redirect back to deal form
-        const returnUrl = sessionStorage.getItem('dealFormReturnUrl') || '{{ route("deals.create") }}';
+        // Redirect back to deal form (use session return URL or default to create)
+        const returnUrl = '{{ session("deal_form_return_url", route("deals.create")) }}';
         window.location.href = returnUrl;
     });
 

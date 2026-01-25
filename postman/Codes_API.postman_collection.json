@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "codes-api-001",
+		"name": "Discount Codes API",
+		"description": "API endpoints for discount codes - dynamic and manageable from dashboard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Active Codes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/codes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"codes"
+					]
+				},
+				"description": "Get all active and valid discount codes.\n\n**Features:**\n- Public endpoint (no authentication required)\n- Returns only active codes\n- Filters out expired codes (valid_to < today)\n- Sorted by created_at (descending)\n- Dynamic - codes can be changed anytime from dashboard\n\n**Response includes:**\n- id\n- subject\n- code\n- discount_amount\n- discount_formatted\n- valid_to (date)\n- valid_to_formatted\n- is_expired (boolean)\n- is_active (boolean)\n- status (active/inactive)\n- image (full URL)\n- image_url (storage path)\n- external_url (if exists)\n- created_at"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/codes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"codes"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Codes retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"subject\": \"Summer Sale 2026\",\n            \"code\": \"SUMMER20\",\n            \"discount_amount\": 20.00,\n            \"discount_formatted\": \"$20.00\",\n            \"valid_to\": \"2026-12-31\",\n            \"valid_to_formatted\": \"Dec 31, 2026\",\n            \"is_expired\": false,\n            \"is_active\": true,\n            \"status\": \"active\",\n            \"image\": \"http://127.0.0.1:8000/storage/codes/image1.jpg\",\n            \"image_url\": \"codes/image1.jpg\",\n            \"external_url\": \"https://play.google.com/store/apps/details?id=com.beeorder.customer\",\n            \"created_at\": \"2026-01-22 10:30:00\"\n        },\n        {\n            \"id\": 2,\n            \"subject\": \"Welcome Discount\",\n            \"code\": \"WELCOME10\",\n            \"discount_amount\": 10.00,\n            \"discount_formatted\": \"$10.00\",\n            \"valid_to\": null,\n            \"valid_to_formatted\": null,\n            \"is_expired\": false,\n            \"is_active\": true,\n            \"status\": \"active\",\n            \"image\": \"http://127.0.0.1:8000/storage/codes/image2.jpg\",\n            \"image_url\": \"codes/image2.jpg\",\n            \"external_url\": null,\n            \"created_at\": \"2026-01-22 10:35:00\"\n        }\n    ]\n}"
+				},
+				{
+					"name": "Empty Response (No Active Codes)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/codes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"codes"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Codes retrieved successfully\",\n    \"data\": []\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Code by Code String",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/codes/SUMMER20",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"codes",
+						"SUMMER20"
+					]
+				},
+				"description": "Get a specific discount code by its code string.\n\n**Features:**\n- Public endpoint (no authentication required)\n- Returns code only if active and not expired\n- Case-insensitive code lookup\n- Returns 404 if code not found or expired\n\n**Usage:**\n- Validate discount codes before applying\n- Show code details to users\n- Check if code is still valid"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/codes/SUMMER20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"codes",
+								"SUMMER20"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Code retrieved successfully\",\n    \"data\": {\n        \"id\": 1,\n        \"subject\": \"Summer Sale 2026\",\n        \"code\": \"SUMMER20\",\n        \"discount_amount\": 20.00,\n        \"discount_formatted\": \"$20.00\",\n        \"valid_to\": \"2026-12-31\",\n        \"valid_to_formatted\": \"Dec 31, 2026\",\n        \"is_expired\": false,\n        \"is_active\": true,\n        \"status\": \"active\",\n        \"image\": \"http://127.0.0.1:8000/storage/codes/image1.jpg\",\n        \"image_url\": \"codes/image1.jpg\",\n        \"external_url\": \"https://play.google.com/store/apps/details?id=com.beeorder.customer\",\n        \"created_at\": \"2026-01-22 10:30:00\"\n    }\n}"
+				},
+				{
+					"name": "Code Not Found or Expired",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/codes/INVALID",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"codes",
+								"INVALID"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"Code not found or expired\"\n}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		}
+	]
+}

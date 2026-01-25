@@ -13,27 +13,22 @@ class CodeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Code::with('customer');
+        $query = Code::query();
 
         if ($request->filled('search')) {
             $q = $request->search;
             $query->where(function($builder) use ($q) {
                 $builder->where('subject', 'like', "%{$q}%")
-                    ->orWhere('description', 'like', "%{$q}%")
-                    ->orWhere('code', 'like', "%{$q}%")
-                    ->orWhereHas('customer', function ($builder) use ($q) {
-                        $builder->where('name', 'like', "%{$q}%")
-                            ->orWhere('email', 'like', "%{$q}%");
-                    });
+                    ->orWhere('code', 'like', "%{$q}%");
             });
         }
 
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
         }
 
         $codes = $query->latest()->paginate(15);
@@ -43,13 +38,15 @@ class CodeController extends Controller
 
     public function create()
     {
-        $customers = Customer::where('is_admin', false)->get();
-        return view('pages.codes.create', compact('customers'));
+        return view('pages.codes.create');
     }
 
     public function store(StoreCodeRequest $request)
     {
         $data = $request->validated();
+
+        // Handle checkbox for is_active
+        $data['is_active'] = $request->has('is_active');
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -63,19 +60,20 @@ class CodeController extends Controller
 
     public function show(Code $code)
     {
-        $code->load('customer');
         return view('pages.codes.show', compact('code'));
     }
 
     public function edit(Code $code)
     {
-        $customers = Customer::where('is_admin', false)->get();
-        return view('pages.codes.edit', compact('code', 'customers'));
+        return view('pages.codes.edit', compact('code'));
     }
 
     public function update(UpdateCodeRequest $request, Code $code)
     {
         $data = $request->validated();
+
+        // Handle checkbox for is_active
+        $data['is_active'] = $request->has('is_active');
 
         // Handle image upload
         if ($request->hasFile('image')) {

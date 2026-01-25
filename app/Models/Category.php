@@ -25,4 +25,12 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    /**
+     * Get all deals for this category.
+     */
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
 }
