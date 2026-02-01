@@ -1,0 +1,200 @@
+{
+	"info": {
+		"_postman_id": "deals-api-collection",
+		"name": "Deals API",
+		"description": "API endpoints for fetching deals in mobile app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Deals",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/deals?per_page=20&page=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"deals"
+					],
+					"query": [
+						{
+							"key": "per_page",
+							"value": "20",
+							"description": "Number of items per page (default: 20, max: 100)"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number"
+						},
+						{
+							"key": "sort_by",
+							"value": "price",
+							"description": "Sort by: price, name, position (default: position)",
+							"disabled": true
+						},
+						{
+							"key": "order",
+							"value": "asc",
+							"description": "Sort order: asc or desc (default: asc)",
+							"disabled": true
+						},
+						{
+							"key": "min_price",
+							"value": "5000",
+							"description": "Minimum price filter",
+							"disabled": true
+						},
+						{
+							"key": "max_price",
+							"value": "20000",
+							"description": "Maximum price filter",
+							"disabled": true
+						},
+						{
+							"key": "category_id",
+							"value": "1",
+							"description": "Filter by category ID",
+							"disabled": true
+						},
+						{
+							"key": "merchant_id",
+							"value": "1",
+							"description": "Filter by merchant ID",
+							"disabled": true
+						},
+						{
+							"key": "featured",
+							"value": "true",
+							"description": "Filter featured deals only",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "pizza",
+							"description": "Search in deal titles (EN/AR)",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Get all active deals with pagination, sorting, and filtering.\n\n**Sorting:**\n- sort_by: price, name, position (default: position)\n- order: asc, desc (default: asc)\n\n**Price Filtering:**\n- min_price: Minimum price\n- max_price: Maximum price\n\n**Other Filters:**\n- category_id: Filter by category\n- merchant_id: Filter by merchant\n- featured: true/false\n- search: Search in titles\n\n**Examples:**\n- /api/deals?sort_by=price&order=asc\n- /api/deals?min_price=5000&max_price=20000\n- /api/deals?sort_by=name&order=desc&featured=true"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Featured Deals",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/deals/featured?limit=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"deals",
+						"featured"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of featured deals to return (default: 10)"
+						}
+					]
+				},
+				"description": "Get featured deals for home screen banner/slider"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deal by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/deals/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"deals",
+						"1"
+					]
+				},
+				"description": "Get detailed information about a specific deal including all images"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deals by Category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/deals/category/1?per_page=20&page=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"deals",
+						"category",
+						"1"
+					],
+					"query": [
+						{
+							"key": "per_page",
+							"value": "20",
+							"description": "Number of items per page"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number"
+						}
+					]
+				},
+				"description": "Get all deals in a specific category"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		}
+	]
+}

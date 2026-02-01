@@ -93,11 +93,13 @@ class DealController extends Controller
 
         // Handle multiple image uploads
         if ($request->hasFile('images')) {
+            $primaryIndex = $request->input('primary_index', 0); // Get primary index from request, default to 0
+            
             foreach ($request->file('images') as $index => $image) {
                 $imagePath = $image->store('deal-images', 'public');
                 $deal->images()->create([
                     'image_url' => $imagePath,
-                    'is_primary' => $index === 0, // First image is primary by default
+                    'is_primary' => $index === (int)$primaryIndex, // Set primary based on user selection
                 ]);
             }
         }
@@ -165,11 +167,29 @@ class DealController extends Controller
 
         // Handle multiple image uploads
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
+            $primaryIndex = $request->input('primary_index', null);
+            
+            // If no existing primary image and new images are being uploaded, set first new image as primary
+            $hasExistingPrimary = $deal->images()->where('is_primary', true)->exists();
+            
+            foreach ($request->file('images') as $index => $image) {
                 $imagePath = $image->store('deal-images', 'public');
+                
+                // Set as primary if:
+                // 1. User explicitly selected this index, OR
+                // 2. No existing primary and this is the first new image
+                $isPrimary = false;
+                if ($primaryIndex !== null && $index === (int)$primaryIndex) {
+                    $isPrimary = true;
+                    // Unset existing primary images
+                    $deal->images()->update(['is_primary' => false]);
+                } elseif (!$hasExistingPrimary && $index === 0) {
+                    $isPrimary = true;
+                }
+                
                 $deal->images()->create([
                     'image_url' => $imagePath,
-                    'is_primary' => false,
+                    'is_primary' => $isPrimary,
                 ]);
             }
         }

@@ -30,14 +30,14 @@ class StoreDealRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'deal_information' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url', 'max:500'],
-            'video' => ['nullable', 'file', 'mimes:mp4,avi,mov,wmv,flv,webm', 'max:10240'], // 10MB max
+            'video' => ['nullable', 'file', 'mimes:mp4,avi,mov,wmv,flv,webm', 'max:102400'], // 100MB max
             'city' => ['nullable', 'string', 'max:255'],
             'area' => ['nullable', 'string', 'max:255'],
             'location_name' => ['nullable', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:20480'], // 20MB per image
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'status' => ['required', Rule::in(['draft', 'active', 'inactive', 'expired'])],

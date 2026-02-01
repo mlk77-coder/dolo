@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Storage;
                     </div>
                     <div>
                         <p class="text-gray-500 text-theme-sm">Category</p>
-                        <p class="text-gray-800 text-lg font-medium">{{ $product->category->name }}</p>
+                        <p class="text-gray-800 text-lg font-medium">{{ $product->category->name_en ?? '—' }}</p>
                     </div>
                     <div>
                         <p class="text-gray-500 text-theme-sm">Price</p>

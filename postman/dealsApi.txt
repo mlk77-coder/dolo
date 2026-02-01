@@ -1,0 +1,262 @@
+# Deals API - Quick Testing Guide
+
+## Base URL
+http://127.0.0.1:8000/api
+
+## Endpoints
+
+### 1. Get All Deals (Home Screen)
+GET http://127.0.0.1:8000/api/deals
+
+Optional Parameters:
+- per_page=20 (items per page)
+- page=1 (page number)
+- category_id=1 (filter by category)
+- merchant_id=1 (filter by merchant)
+- featured=true (only featured deals)
+- search=pizza (search in titles)
+- sort_by=discount_percentage (sort field)
+- sort_order=desc (asc or desc)
+
+Example with filters:
+GET http://127.0.0.1:8000/api/deals?per_page=10&featured=true&sort_by=discount_percentage&sort_order=desc
+
+### 2. Get Featured Deals
+GET http://127.0.0.1:8000/api/deals/featured
+
+Optional Parameters:
+- limit=10 (number of deals)
+
+Example:
+GET http://127.0.0.1:8000/api/deals/featured?limit=5
+
+### 3. Get Single Deal (Detail Page)
+GET http://127.0.0.1:8000/api/deals/{id}
+
+Example:
+GET http://127.0.0.1:8000/api/deals/1
+
+### 4. Get Deals by Category
+GET http://127.0.0.1:8000/api/deals/category/{categoryId}
+
+Optional Parameters:
+- per_page=20
+- page=1
+
+Example:
+GET http://127.0.0.1:8000/api/deals/category/2?per_page=20
+
+## Response Structure
+
+### List Response (All Deals, Featured, By Category)
+{
+  "success": true,
+  "message": "Deals retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "title": {
+        "en": "Deal Title English",
+        "ar": "عنوان الصفقة بالعربية"
+      },
+      "merchant": {
+        "id": 1,
+        "name": "Merchant Name"
+      },
+      "category": {
+        "id": 2,
+        "name_en": "Category Name",
+        "name_ar": "اسم الفئة"
+      },
+      "prices": {
+        "original": 1000.00,
+        "discounted": 500.00,
+        "discount_percentage": 50.00,
+        "savings": 500.00
+      },
+      "buyer_counter": {
+        "count": 150,
+        "show": true
+      },
+      "image": "http://127.0.0.1:8000/storage/deal-images/image.jpg",
+      "availability": {
+        "is_available": true,
+        "status": "active",
+        "start_date": "2026-01-20T00:00:00+00:00",
+        "end_date": "2026-02-20T23:59:59+00:00",
+        "time_remaining": {
+          "days": 25,
+          "hours": 14,
+          "minutes": 30,
+          "seconds": 45,
+          "total_seconds": 2203845
+        }
+      },
+      "featured": true,
+      "quantity": 100,
+      "show_savings_percentage": true
+    }
+  ],
+  "pagination": {
+    "total": 50,
+    "per_page": 20,
+    "current_page": 1,
+    "last_page": 3,
+    "from": 1,
+    "to": 20
+  }
+}
+
+### Detail Response (Single Deal)
+{
+  "success": true,
+  "message": "Deal retrieved successfully",
+  "data": {
+    "id": 1,
+    "title": {
+      "en": "Deal Title",
+      "ar": "عنوان الصفقة"
+    },
+    "sku": "DEAL-001",
+    "merchant": {
+      "id": 1,
+      "name": "Merchant Name",
+      "phone": "+963-11-1234567",
+      "email": "info@merchant.com"
+    },
+    "category": {
+      "id": 2,
+      "name_en": "Category",
+      "name_ar": "الفئة"
+    },
+    "prices": {
+      "original": 1000.00,
+      "discounted": 500.00,
+      "discount_percentage": 50.00,
+      "savings": 500.00
+    },
+    "buyer_counter": {
+      "count": 150,
+      "show": true
+    },
+    "quantity": 100,
+    "description": "Deal description",
+    "deal_information": "Additional information",
+    "video_url": "https://example.com/video.mp4",
+    "location": {
+      "city": "Damascus",
+      "area": "Mezzeh",
+      "location_name": "Main Branch",
+      "latitude": 33.5102,
+      "longitude": 36.2781
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "http://127.0.0.1:8000/storage/deal-images/image1.jpg",
+        "is_primary": true
+      },
+      {
+        "id": 2,
+        "url": "http://127.0.0.1:8000/storage/deal-images/image2.jpg",
+        "is_primary": false
+      }
+    ],
+    "availability": {
+      "is_available": true,
+      "status": "active",
+      "start_date": "2026-01-20T00:00:00+00:00",
+      "end_date": "2026-02-20T23:59:59+00:00",
+      "time_remaining": {
+        "days": 25,
+        "hours": 14,
+        "minutes": 30,
+        "seconds": 45,
+        "total_seconds": 2203845
+      }
+    },
+    "featured": true,
+    "show_savings_percentage": true,
+    "created_at": "2026-01-15T10:30:00+00:00",
+    "updated_at": "2026-01-20T15:45:00+00:00"
+  }
+}
+
+## Key Fields for Frontend
+
+### For Home Screen List:
+- id: Deal ID
+- title.en / title.ar: Deal title
+- merchant.name: Merchant name
+- prices.original: Original price
+- prices.discounted: Discounted price
+- prices.discount_percentage: Discount %
+- buyer_counter.count: Number of buyers
+- buyer_counter.show: Show buyer counter?
+- image: Primary image URL
+- availability.is_available: Is deal active?
+- availability.time_remaining: For countdown timer
+
+### For Countdown Timer:
+Use availability.time_remaining.total_seconds and count down:
+- days: Full days remaining
+- hours: Hours (0-23)
+- minutes: Minutes (0-59)
+- seconds: Seconds (0-59)
+- total_seconds: Total seconds (use this for countdown)
+
+### For Deal Status:
+Check availability.is_available:
+- true: Show deal as active with countdown
+- false: Show deal as expired/inactive
+
+## Testing Steps
+
+1. Start your Laravel server:
+   php artisan serve
+
+2. Test in browser or Postman:
+   http://127.0.0.1:8000/api/deals
+
+3. Import Postman collection:
+   File > Import > Deals_API.postman_collection.json
+
+4. Update base_url variable in Postman:
+   - Click on collection
+   - Go to Variables tab
+   - Set base_url to your server URL
+
+5. Run requests and check responses
+
+## Common Issues
+
+### Empty data array:
+- No active deals in database
+- Deals are expired (end_date passed)
+- Deals status is not "active"
+
+### Image URLs not working:
+- Run: php artisan storage:link
+- Check images exist in storage/app/public/deal-images/
+
+### 404 Not Found:
+- Check route exists: php artisan route:list | findstr deals
+- Verify API URL is correct
+
+### 500 Server Error:
+- Check Laravel logs: storage/logs/laravel.log
+- Verify database connection
+- Check Deal model relationships
+
+## Dynamic Updates
+
+When you add/edit deals in dashboard:
+1. Changes saved to database immediately
+2. API automatically returns updated data
+3. Mobile app fetches fresh data
+4. No app update needed!
+
+Refresh strategies:
+- Pull-to-refresh: User swipes down
+- Auto-refresh: Every 5 minutes
+- On app open: Fetch latest deals

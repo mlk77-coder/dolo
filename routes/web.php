@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('deals', DealController::class);
     
     Route::resource('deal-images', DealImageController::class)->only(['store', 'destroy']);
+    Route::post('deal-images/{dealImage}/set-primary', [DealImageController::class, 'setPrimary'])->name('deal-images.set-primary');
     Route::resource('advertisements', AdvertisementController::class);
     Route::resource('mobile-carousel-images', MobileCarouselImageController::class);
     Route::resource('merchants', MerchantController::class);

@@ -34,6 +34,12 @@ Route::get('/codes/{code}', [CodeController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
+// Public deals (no authentication required)
+Route::get('/deals', [\App\Http\Controllers\Api\DealController::class, 'index']);
+Route::get('/deals/featured', [\App\Http\Controllers\Api\DealController::class, 'featured']);
+Route::get('/deals/{id}', [\App\Http\Controllers\Api\DealController::class, 'show']);
+Route::get('/deals/category/{categoryId}', [\App\Http\Controllers\Api\DealController::class, 'byCategory']);
+
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     // Basic user info

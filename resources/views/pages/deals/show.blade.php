@@ -32,7 +32,7 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm">Category</p>
-                <p class="font-medium">{{ $deal->category->name ?? '—' }}</p>
+                <p class="font-medium">{{ $deal->category->name_en ?? '—' }}</p>
             </div>
             <div>
                 <p class="text-gray-500 text-sm">SKU</p>
@@ -131,27 +131,38 @@
                     @endif
                 </div>
             @endif
+            
             @if($deal->images && $deal->images->count() > 0)
                 <div class="md:col-span-2">
-                    <p class="text-gray-500 text-sm mb-3">Images Gallery</p>
+                    <p class="text-gray-500 text-sm mb-3">Images Gallery ({{ $deal->images->count() }} images)</p>
                     
-                    <!-- Image Carousel -->
+                    <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
+                        <p><strong>Debug Info:</strong></p>
+                        <p>First image URL in DB: {{ $deal->images->first()->image_url ?? 'N/A' }}</p>
+                        <p>Full asset URL: {{ $deal->images->first() ? asset('storage/' . $deal->images->first()->image_url) : 'N/A' }}</p>
+                        <p>File exists: {{ $deal->images->first() && file_exists(storage_path('app/public/' . $deal->images->first()->image_url)) ? 'YES' : 'NO' }}</p>
+                    </div>
+                    
                     <div class="relative" x-data="{ 
                         currentImage: 0, 
                         images: @json($deal->images->map(function($img) { 
-                            $url = asset('storage/' . $img->image_url);
-                            return $url;
+                            return [
+                                'url' => asset('storage/' . $img->image_url),
+                                'path' => $img->image_url,
+                                'is_primary' => $img->is_primary
+                            ];
                         })) 
                     }">
-                        <!-- Main Carousel Image -->
                         <div class="relative w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden mb-4 shadow-lg">
                             <template x-for="(image, index) in images" :key="index">
                                 <div x-show="currentImage === index" class="absolute inset-0 transition-opacity duration-500" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                    <img :src="image" :alt="'Deal Image ' + (index + 1)" class="w-full h-full object-cover">
+                                    <img :src="image.url" :alt="'Deal Image ' + (index + 1)" class="w-full h-full object-contain bg-white" @@error="console.error('Image failed to load:', image.url)">
+                                    <div x-show="image.is_primary" class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                        Primary Image
+                                    </div>
                                 </div>
                             </template>
                             
-                            <!-- Navigation Arrows -->
                             <button @click="currentImage = (currentImage - 1 + images.length) % images.length" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 text-gray-800 p-3 rounded-full hover:bg-opacity-100 hover:scale-110 transition-all shadow-lg z-10">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -163,25 +174,27 @@
                                 </svg>
                             </button>
                             
-                            <!-- Image Counter -->
                             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
                                 <span x-text="currentImage + 1"></span> / <span x-text="images.length"></span>
                             </div>
                         </div>
                         
-                        <!-- Thumbnail Navigation -->
                         <div class="grid grid-cols-4 md:grid-cols-6 gap-3">
                             <template x-for="(image, index) in images" :key="index">
                                 <button @click="currentImage = index" class="relative aspect-square overflow-hidden rounded-lg border-2 transition-all hover:scale-105 shadow-md" :class="currentImage === index ? 'border-brand-500 ring-2 ring-brand-300 ring-offset-2' : 'border-gray-200 hover:border-gray-400'">
-                                    <img :src="image" :alt="'Thumbnail ' + (index + 1)" class="w-full h-full object-cover">
+                                    <img :src="image.url" :alt="'Thumbnail ' + (index + 1)" class="w-full h-full object-cover bg-white" @@error="console.error('Thumbnail failed:', image.url)">
                                     <div x-show="currentImage === index" class="absolute inset-0 bg-brand-500 bg-opacity-20"></div>
+                                    <div x-show="image.is_primary" class="absolute top-1 right-1 bg-green-500 text-white text-xs px-1 rounded">★</div>
                                 </button>
                             </template>
                         </div>
                     </div>
                 </div>
+            @else
+                <div class="md:col-span-2">
+                    <p class="text-gray-500 text-sm">No images uploaded for this deal</p>
+                </div>
             @endif
         </div>
     </x-common.component-card>
 @endsection
-

@@ -34,7 +34,7 @@
                 <select name="category_id" class="px-3 py-2 border rounded-lg">
                     <option value="">All</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name_en }}</option>
                     @endforeach
                 </select>
             </div>
@@ -89,12 +89,32 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
                                 </svg>
                             </td>
-                            <td class="px-5 py-4 font-medium">{{ $deal->title_en }}</td>
+                            <td class="px-5 py-4 font-medium">
+                                <div class="max-w-xs truncate" title="{{ $deal->title_en }}">
+                                    {{ $deal->title_en }}
+                                </div>
+                            </td>
                             <td class="px-5 py-4 text-sm text-gray-600">{{ $deal->sku ?? '—' }}</td>
-                            <td class="px-5 py-4">{{ $deal->merchant->business_name ?? '—' }}</td>
-                            <td class="px-5 py-4">{{ $deal->category->name ?? '—' }}</td>
-                            <td class="px-5 py-4">{{ $deal->city ?? '—' }}</td>
-                            <td class="px-5 py-4">{{ $deal->area ?? '—' }}</td>
+                            <td class="px-5 py-4">
+                                <div class="max-w-[150px] truncate" title="{{ $deal->merchant->business_name ?? '—' }}">
+                                    {{ $deal->merchant->business_name ?? '—' }}
+                                </div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="max-w-[120px] truncate" title="{{ $deal->category->name_en ?? '—' }}">
+                                    {{ $deal->category->name_en ?? '—' }}
+                                </div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="max-w-[100px] truncate" title="{{ $deal->city ?? '—' }}">
+                                    {{ $deal->city ?? '—' }}
+                                </div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="max-w-[100px] truncate" title="{{ $deal->area ?? '—' }}">
+                                    {{ $deal->area ?? '—' }}
+                                </div>
+                            </td>
                             <td class="px-5 py-4">
                                 <div class="text-sm">
                                     <span class="line-through text-gray-400">${{ number_format($deal->original_price, 2) }}</span>

@@ -30,7 +30,13 @@ let selectedLng = null;
 // Open modal
 function openLocationModal() {
     console.log('openLocationModal called');
-    document.getElementById('locationModal').classList.remove('hidden');
+    const modal = document.getElementById('locationModal');
+    if (!modal) {
+        console.error('Location modal not found in DOM');
+        alert('Error: Location modal not loaded. Please refresh the page.');
+        return;
+    }
+    modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     
     setTimeout(() => {
@@ -45,7 +51,9 @@ function openLocationModal() {
 
 // Close modal
 function closeLocationModal() {
-    document.getElementById('locationModal').classList.add('hidden');
+    const modal = document.getElementById('locationModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
     document.body.style.overflow = '';
 }
 
@@ -74,7 +82,49 @@ function addModalMarker(lat, lng) {
     selectedLat = lat.toFixed(7);
     selectedLng = lng.toFixed(7);
     
+    // Auto-fill location name using reverse geocoding
+    reverseGeocode(lat, lng);
+    
     updateModalLocationDisplay();
+}
+
+// Reverse geocode to get location name from coordinates
+async function reverseGeocode(lat, lng) {
+    try {
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar,en`,
+            { headers: { 'Accept-Language': 'ar,en' } }
+        );
+        
+        const data = await res.json();
+        if (data && data.address) {
+            // Extract meaningful location name
+            const locationName = data.address.neighbourhood || 
+                                data.address.suburb || 
+                                data.address.quarter || 
+                                data.address.district || 
+                                data.address.city_district || 
+                                data.address.road || 
+                                'Damascus Location';
+            
+            const area = data.address.suburb || 
+                        data.address.neighbourhood || 
+                        data.address.quarter || 
+                        data.address.district || 
+                        '';
+            
+            // Update modal fields
+            document.getElementById('modal-location-name').value = locationName;
+            if (area) {
+                document.getElementById('modal-area').value = area;
+            }
+            
+            updateModalLocationDisplay();
+        }
+    } catch (e) {
+        console.error('Reverse geocoding failed:', e);
+        // Don't show error to user, just log it
+    }
 }
 
 // Update location display in modal
@@ -182,13 +232,10 @@ function confirmLocation() {
     document.getElementById('area-field').value = area;
     
     // Update display in main form
-    const displayDiv = document.getElementById('location-display');
-    const displayText = document.getElementById('location-display-text');
-    const coordsText = document.getElementById('coordinates-display-text');
-    
-    displayDiv.classList.remove('hidden');
-    displayText.textContent = locationName || 'Selected Location' + (area ? ' - ' + area : '');
-    coordsText.textContent = `${selectedLat}, ${selectedLng}`;
+    const coordinatesDisplay = document.getElementById('coordinates-display');
+    if (coordinatesDisplay) {
+        coordinatesDisplay.value = `${selectedLat}, ${selectedLng}`;
+    }
     
     // Close modal
     closeLocationModal();
@@ -220,7 +267,11 @@ function clearLocation() {
     document.getElementById('longitude-field').value = '';
     document.getElementById('location-name-field').value = '';
     document.getElementById('area-field').value = '';
-    document.getElementById('location-display').classList.add('hidden');
+    
+    const coordinatesDisplay = document.getElementById('coordinates-display');
+    if (coordinatesDisplay) {
+        coordinatesDisplay.value = '';
+    }
     
     const notification = document.createElement('div');
     notification.className = 'fixed top-4 right-4 z-50 bg-gray-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2';
@@ -256,6 +307,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateModalLocationDisplay();
             }
         });
+    }
+    
+    // Load existing coordinates into display field
+    const latField = document.getElementById('latitude-field');
+    const lngField = document.getElementById('longitude-field');
+    const coordsDisplay = document.getElementById('coordinates-display');
+    
+    if (latField && lngField && coordsDisplay && latField.value && lngField.value) {
+        coordsDisplay.value = `${latField.value}, ${lngField.value}`;
+    }
+    
+    // Debug: Check if modal exists
+    const modal = document.getElementById('locationModal');
+    if (modal) {
+        console.log('✅ Modal found in DOM');
+    } else {
+        console.error('❌ Modal NOT found in DOM - Check if partial is included');
     }
     
     console.log('✅ Modal functions loaded successfully');

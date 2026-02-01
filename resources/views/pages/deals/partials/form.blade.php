@@ -1,21 +1,23 @@
 @php
     use Illuminate\Support\Facades\Storage;
-    
-    // Initialize draft if not set
-    $draft = $draft ?? [];
 @endphp
 
-@if(!empty($draft))
-<div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+{{-- Display all validation errors --}}
+@if ($errors->any())
+<div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
     <div class="flex items-start gap-3">
-        <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         <div class="flex-1">
-            <p class="text-sm font-semibold text-green-800">✓ Draft Data Restored</p>
-            <p class="text-xs text-green-600 mt-1">Your form data has been restored from the server session ({{ count($draft) }} fields).</p>
+            <p class="text-sm font-semibold text-red-800 mb-2">⚠️ Please fix the following errors:</p>
+            <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-        <button onclick="this.parentElement.parentElement.remove()" class="text-green-400 hover:text-green-600">
+        <button onclick="this.parentElement.parentElement.remove()" class="text-red-400 hover:text-red-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -27,17 +29,17 @@
 <div class="grid md:grid-cols-2 gap-6">
     <div>
         <label class="block mb-2">Title (EN) *</label>
-        <input type="text" name="title_en" value="{{ old('title_en', $draft['title_en'] ?? $deal->title_en ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="text" name="title_en" value="{{ old('title_en', $deal->title_en ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('title_en')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">Title (AR) *</label>
-        <input type="text" name="title_ar" value="{{ old('title_ar', $draft['title_ar'] ?? $deal->title_ar ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="text" name="title_ar" value="{{ old('title_ar', $deal->title_ar ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('title_ar')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">SKU</label>
-        <input type="text" name="sku" value="{{ old('sku', $draft['sku'] ?? $deal->sku ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Stock Keeping Unit">
+        <input type="text" name="sku" value="{{ old('sku', $deal->sku ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Stock Keeping Unit">
         @error('sku')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 
@@ -46,7 +48,7 @@
         <select name="merchant_id" class="w-full px-4 py-2 border rounded-lg">
             <option value="">Select Merchant</option>
             @foreach($merchants ?? [] as $merchant)
-                <option value="{{ $merchant->id }}" @selected(old('merchant_id', $draft['merchant_id'] ?? $deal->merchant_id ?? '') == $merchant->id)>
+                <option value="{{ $merchant->id }}" @selected(old('merchant_id', $deal->merchant_id ?? '') == $merchant->id)>
                     {{ $merchant->business_name }}
                 </option>
             @endforeach
@@ -58,7 +60,7 @@
         <select name="category_id" class="w-full px-4 py-2 border rounded-lg">
             <option value="">Select Category</option>
             @foreach($categories as $category)
-                <option value="{{ $category->id }}" @selected(old('category_id', $draft['category_id'] ?? $deal->category_id ?? '') == $category->id)>{{ $category->name_en }} - {{ $category->name_ar }}</option>
+                <option value="{{ $category->id }}" @selected(old('category_id', $deal->category_id ?? '') == $category->id)>{{ $category->name_en }} - {{ $category->name_ar }}</option>
             @endforeach
         </select>
         @error('category_id')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
@@ -66,40 +68,40 @@
 
     <div>
         <label class="block mb-2">Original Price *</label>
-        <input type="number" step="0.01" name="original_price" id="original_price" value="{{ old('original_price', $draft['original_price'] ?? $deal->original_price ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="number" step="0.01" name="original_price" id="original_price" value="{{ old('original_price', $deal->original_price ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('original_price')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">Discounted Price *</label>
-        <input type="number" step="0.01" name="discounted_price" id="discounted_price" value="{{ old('discounted_price', $draft['discounted_price'] ?? $deal->discounted_price ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="number" step="0.01" name="discounted_price" id="discounted_price" value="{{ old('discounted_price', $deal->discounted_price ?? '') }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('discounted_price')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 
     <div>
         <label class="block mb-2">Discount % (Auto-calculated)</label>
-        <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" value="{{ old('discount_percentage', $draft['discount_percentage'] ?? $deal->discount_percentage ?? '') }}" readonly class="w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed">
+        <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" value="{{ old('discount_percentage', $deal->discount_percentage ?? '') }}" readonly class="w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed">
         <p class="text-xs text-gray-500 mt-1">Automatically calculated from original and discounted prices</p>
         @error('discount_percentage')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">Quantity</label>
-        <input type="number" name="quantity" value="{{ old('quantity', $draft['quantity'] ?? $deal->quantity ?? 0) }}" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="Available quantity">
+        <input type="number" name="quantity" value="{{ old('quantity', $deal->quantity ?? 0) }}" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="Available quantity">
         <p class="text-xs text-gray-500 mt-1">Number of items available for this deal</p>
         @error('quantity')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">Buyer Counter</label>
-        <input type="number" name="buyer_counter" value="{{ old('buyer_counter', $draft['buyer_counter'] ?? $deal->buyer_counter ?? 0) }}" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="Number of buyers">
+        <input type="number" name="buyer_counter" value="{{ old('buyer_counter', $deal->buyer_counter ?? 0) }}" min="0" class="w-full px-4 py-2 border rounded-lg" placeholder="Number of buyers">
         @error('buyer_counter')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">City</label>
-        <input type="text" name="city" value="{{ old('city', $draft['city'] ?? $deal->city ?? '') }}" class="w-full px-4 py-2 border rounded-lg">
+        <input type="text" name="city" value="{{ old('city', $deal->city ?? '') }}" class="w-full px-4 py-2 border rounded-lg">
         @error('city')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">Area</label>
-        <input type="text" name="area" id="area-field" value="{{ old('area', $draft['area'] ?? $deal->area ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Area within the city" readonly>
+        <input type="text" name="area" id="area-field" value="{{ old('area', $deal->area ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="Area within the city">
         @error('area')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 </div>
@@ -137,10 +139,9 @@
                         type="text" 
                         name="location_name" 
                         id="location-name-field"
-                        value="{{ old('location_name', $draft['location_name'] ?? $deal->location_name ?? '') }}" 
+                        value="{{ old('location_name', $deal->location_name ?? '') }}" 
                         class="w-full px-4 py-3 pl-11 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700 font-medium focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200" 
-                        placeholder="e.g., Main Branch Damascus"
-                        readonly>
+                        placeholder="e.g., Main Branch Damascus">
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -173,8 +174,8 @@
         </div>
         
         <!-- Hidden inputs for coordinates -->
-        <input type="hidden" name="latitude" id="latitude-field" value="{{ old('latitude', $draft['latitude'] ?? $deal->latitude ?? '') }}">
-        <input type="hidden" name="longitude" id="longitude-field" value="{{ old('longitude', $draft['longitude'] ?? $deal->longitude ?? '') }}">
+        <input type="hidden" name="latitude" id="latitude-field" value="{{ old('latitude', $deal->latitude ?? '') }}">
+        <input type="hidden" name="longitude" id="longitude-field" value="{{ old('longitude', $deal->longitude ?? '') }}">
         
         <div class="flex flex-wrap gap-3">
             <button 
@@ -237,12 +238,12 @@
 
     <div>
         <label class="block mb-2">Start Date *</label>
-        <input type="datetime-local" name="start_date" value="{{ old('start_date', $draft['start_date'] ?? (isset($deal)? optional($deal->start_date)->format('Y-m-d\TH:i'): '')) }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="datetime-local" name="start_date" value="{{ old('start_date', (isset($deal)? optional($deal->start_date)->format('Y-m-d\TH:i'): '')) }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('start_date')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
         <label class="block mb-2">End Date *</label>
-        <input type="datetime-local" name="end_date" value="{{ old('end_date', $draft['end_date'] ?? (isset($deal)? optional($deal->end_date)->format('Y-m-d\TH:i'): '')) }}" required class="w-full px-4 py-2 border rounded-lg">
+        <input type="datetime-local" name="end_date" value="{{ old('end_date', (isset($deal)? optional($deal->end_date)->format('Y-m-d\TH:i'): '')) }}" required class="w-full px-4 py-2 border rounded-lg">
         @error('end_date')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 
@@ -250,47 +251,47 @@
         <label class="block mb-2">Status *</label>
         <select name="status" required class="w-full px-4 py-2 border rounded-lg">
             @foreach(['draft','active','inactive','expired'] as $status)
-                <option value="{{ $status }}" @selected(old('status', $draft['status'] ?? $deal->status ?? '') === $status)>{{ ucfirst($status) }}</option>
+                <option value="{{ $status }}" @selected(old('status', $deal->status ?? '') === $status)>{{ ucfirst($status) }}</option>
             @endforeach
         </select>
         @error('status')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="flex items-center gap-2">
-        <input type="checkbox" name="featured" value="1" @checked(old('featured', $draft['featured'] ?? $deal->featured ?? false)) class="h-4 w-4">
+        <input type="checkbox" name="featured" value="1" @checked(old('featured', $deal->featured ?? false)) class="h-4 w-4">
         <label class="block">Featured</label>
         @error('featured')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="flex items-center gap-2">
-        <input type="checkbox" name="show_buyer_counter" value="1" @checked(old('show_buyer_counter', $draft['show_buyer_counter'] ?? $deal->show_buyer_counter ?? true)) class="h-4 w-4">
+        <input type="checkbox" name="show_buyer_counter" value="1" @checked(old('show_buyer_counter', $deal->show_buyer_counter ?? true)) class="h-4 w-4">
         <label class="block">Show Buyer Counter</label>
         @error('show_buyer_counter')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="flex items-center gap-2">
-        <input type="checkbox" name="show_savings_percentage" value="1" @checked(old('show_savings_percentage', $draft['show_savings_percentage'] ?? $deal->show_savings_percentage ?? true)) class="h-4 w-4">
+        <input type="checkbox" name="show_savings_percentage" value="1" @checked(old('show_savings_percentage', $deal->show_savings_percentage ?? true)) class="h-4 w-4">
         <label class="block">Show Savings Percentage</label>
         @error('show_savings_percentage')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
 
     <div class="md:col-span-2">
         <label class="block mb-2">Description</label>
-        <textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg">{{ old('description', $draft['description'] ?? $deal->description ?? '') }}</textarea>
+        <textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg">{{ old('description', $deal->description ?? '') }}</textarea>
         @error('description')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="md:col-span-2">
         <label class="block mb-2">Deal Information</label>
-        <textarea name="deal_information" rows="4" class="w-full px-4 py-2 border rounded-lg" placeholder="Additional deal information (separate from description)">{{ old('deal_information', $draft['deal_information'] ?? $deal->deal_information ?? '') }}</textarea>
+        <textarea name="deal_information" rows="4" class="w-full px-4 py-2 border rounded-lg" placeholder="Additional deal information (separate from description)">{{ old('deal_information', $deal->deal_information ?? '') }}</textarea>
         @error('deal_information')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="md:col-span-2">
         <label class="block mb-2">Video URL</label>
-        <input type="url" name="video_url" value="{{ old('video_url', $draft['video_url'] ?? $deal->video_url ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="https://example.com/video.mp4 or YouTube/Vimeo URL">
+        <input type="url" name="video_url" value="{{ old('video_url', $deal->video_url ?? '') }}" class="w-full px-4 py-2 border rounded-lg" placeholder="https://example.com/video.mp4 or YouTube/Vimeo URL">
         <p class="text-xs text-gray-500 mt-1">Or upload a video file below</p>
         @error('video_url')<p class="text-red-500 text-xs">{{ $message }}</p>@enderror
     </div>
     <div class="md:col-span-2">
         <label class="block mb-2">Upload Video File</label>
         <input type="file" name="video" accept="video/*" class="w-full px-4 py-2 border rounded-lg">
-        <p class="text-xs text-gray-500 mt-1">Max 10MB. Supported formats: MP4, AVI, MOV, WMV, FLV, WEBM</p>
+        <p class="text-xs text-gray-500 mt-1">Max 100MB. Supported formats: MP4, AVI, MOV, WMV, FLV, WEBM</p>
         @if(isset($deal) && $deal->video_url)
             <p class="text-xs text-green-600 mt-1">Current video: {{ basename($deal->video_url) }}</p>
         @endif
@@ -312,22 +313,43 @@
     @if(isset($deal) && $deal->images && $deal->images->count() > 0)
         <div class="mb-6">
             <h4 class="font-medium mb-3 text-gray-700">Existing Images</h4>
+            <p class="text-sm text-gray-600 mb-3">💡 The primary image will be shown on the home page and deal listings</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach($deal->images as $image)
                     <div class="relative group">
-                        <img src="{{ asset('storage/' . $image->image_url) }}" alt="Deal Image" class="w-full h-32 object-cover rounded-lg border shadow-sm">
+                        <img src="{{ asset('storage/' . $image->image_url) }}" alt="Deal Image" class="w-full h-32 object-cover rounded-lg border-2 shadow-sm {{ $image->is_primary ? 'border-green-500' : 'border-gray-200' }}">
+                        
+                        <!-- Primary Badge -->
                         @if($image->is_primary)
-                            <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Primary</span>
-                        @endif
-                        <form action="{{ route('deal-images.destroy', $image) }}" method="POST" class="absolute top-2 right-2">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" onclick="return confirm('Are you sure?')" class="bg-red-500 text-white p-1 rounded hover:bg-red-600 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                 </svg>
+                                Primary
+                            </span>
+                        @else
+                            <!-- Set as Primary Button -->
+                            <button 
+                                type="button" 
+                                onclick="setPrimaryImage({{ $image->id }}, {{ $deal->id }})"
+                                class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-semibold opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-600 flex items-center gap-1"
+                            >
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                Set Primary
                             </button>
-                        </form>
+                        @endif
+                        
+                        <!-- Delete Button -->
+                        <button 
+                            type="button" 
+                            onclick="deleteImage({{ $image->id }}, '{{ route('deal-images.destroy', $image) }}')" 
+                            class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600 transition opacity-0 group-hover:opacity-100">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
                 @endforeach
             </div>
@@ -337,6 +359,9 @@
     <!-- Image Upload Area with Preview -->
     <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-white hover:border-brand-500 transition-colors">
         <h4 class="font-medium mb-3 text-gray-700">Upload New Images</h4>
+        
+        <!-- Hidden input to store primary index -->
+        <input type="hidden" name="primary_index" :value="primaryIndex">
         
         <!-- Drop Zone -->
         <div 
@@ -352,18 +377,47 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
             </svg>
             <p class="text-gray-600 mb-1">Click to upload or drag and drop</p>
-            <p class="text-sm text-gray-500">Multiple images supported (PNG, JPG, WEBP, max 2MB each)</p>
+            <p class="text-sm text-gray-500">Multiple images supported (PNG, JPG, WEBP, max 20MB each)</p>
         </div>
+        
+        {{-- Display validation errors for images --}}
+        @error('images')
+            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+        @enderror
+        @error('images.*')
+            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+        @enderror
 
         <!-- Preview Gallery -->
         <div x-show="previewImages.length > 0" class="mt-6">
             <h5 class="font-medium mb-3 text-gray-700">Preview (<span x-text="previewImages.length"></span> images)</h5>
+            <p class="text-sm text-gray-600 mb-3">💡 Click on an image to set it as primary (will be shown on home page)</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <template x-for="(image, index) in previewImages" :key="index">
-                    <div class="relative group">
-                        <img :src="image.preview" :alt="'Preview ' + (index + 1)" class="w-full h-32 object-cover rounded-lg border shadow-sm">
+                    <div class="relative group cursor-pointer" @click="setPrimaryPreview(index)">
+                        <img :src="image.preview" :alt="'Preview ' + (index + 1)" 
+                             :class="primaryIndex === index ? 'border-green-500 border-4' : 'border-gray-200 border-2'"
+                             class="w-full h-32 object-cover rounded-lg shadow-sm transition-all">
+                        
+                        <!-- Primary Badge -->
+                        <div x-show="primaryIndex === index" class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            Primary
+                        </div>
+                        
+                        <!-- Set Primary Hint -->
+                        <div x-show="primaryIndex !== index" class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            Click to set primary
+                        </div>
+                        
+                        <!-- Delete Button -->
                         <button 
-                            @click="removeImage(index)"
+                            @click.stop="removeImage(index)"
                             type="button"
                             class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
                         >
@@ -371,7 +425,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                        <div x-show="index === 0" class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">Primary</div>
                     </div>
                 </template>
             </div>
@@ -381,14 +434,70 @@
 
 @push('scripts')
 <script>
+// Set primary image for existing images
+function setPrimaryImage(imageId, dealId) {
+    if (!confirm('Set this image as primary? It will be shown on the home page.')) {
+        return;
+    }
+    
+    // Create a form to submit the request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/deal-images/${imageId}/set-primary`;
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = '{{ csrf_token() }}';
+    form.appendChild(csrfInput);
+    
+    // Append form to body and submit
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Delete image function
+function deleteImage(imageId, deleteUrl) {
+    if (!confirm('Are you sure you want to delete this image?')) {
+        return;
+    }
+    
+    // Create a hidden form to submit DELETE request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = deleteUrl;
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = '{{ csrf_token() }}';
+    form.appendChild(csrfInput);
+    
+    // Add DELETE method
+    const methodInput = document.createElement('input');
+    methodInput.type = 'hidden';
+    methodInput.name = '_method';
+    methodInput.value = 'DELETE';
+    form.appendChild(methodInput);
+    
+    // Append form to body and submit
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Image gallery Alpine.js component
 function imageGallery() {
     return {
         previewImages: [],
         isDragging: false,
+        primaryIndex: 0, // First image is primary by default
         
         handleFiles(files) {
             const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-            let loadedCount = 0;
             
             validFiles.forEach(file => {
                 const reader = new FileReader();
@@ -397,19 +506,9 @@ function imageGallery() {
                         file: file,
                         preview: e.target.result
                     });
-                    loadedCount++;
-                    // Update file input after all files are loaded
-                    if (loadedCount === validFiles.length) {
-                        this.updateFileInput();
-                    }
                 };
                 reader.readAsDataURL(file);
             });
-            
-            // If no valid files, still update (to clear if needed)
-            if (validFiles.length === 0) {
-                this.updateFileInput();
-            }
         },
         
         handleDrop(event) {
@@ -420,190 +519,29 @@ function imageGallery() {
         
         removeImage(index) {
             this.previewImages.splice(index, 1);
-            this.updateFileInput();
+            
+            // Adjust primary index if needed
+            if (this.primaryIndex === index) {
+                this.primaryIndex = 0; // Reset to first image
+            } else if (this.primaryIndex > index) {
+                this.primaryIndex--; // Adjust if primary was after deleted image
+            }
+            
+            // Update file input
+            const input = document.getElementById('deal-images-input');
+            if (input && this.previewImages.length === 0) {
+                input.value = '';
+            }
         },
         
-        updateFileInput() {
-            const input = document.getElementById('deal-images-input');
-            if (input && this.previewImages.length > 0) {
-                const dt = new DataTransfer();
-                this.previewImages.forEach(item => {
-                    dt.items.add(item.file);
-                });
-                input.files = dt.files;
-            }
+        setPrimaryPreview(index) {
+            this.primaryIndex = index;
+            console.log('Primary image set to index:', index);
         }
     }
 }
 
-// Auto-save functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const AUTOSAVE_KEY = 'dealFormAutoSave';
-    const AUTOSAVE_TIMESTAMP_KEY = 'dealFormAutoSaveTime';
-    let autoSaveTimeout = null;
-    let autoSaveIndicator = null;
-    
-    // Create auto-save indicator
-    function createAutoSaveIndicator() {
-        const indicator = document.createElement('div');
-        indicator.id = 'autosave-indicator';
-        indicator.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transition-all duration-300 opacity-0';
-        indicator.style.transform = 'translateY(-20px)';
-        document.body.appendChild(indicator);
-        return indicator;
-    }
-    
-    autoSaveIndicator = createAutoSaveIndicator();
-    
-    // Show auto-save status
-    function showAutoSaveStatus(message, type = 'success') {
-        const colors = {
-            success: 'bg-green-500 text-white',
-            saving: 'bg-blue-500 text-white',
-            error: 'bg-red-500 text-white'
-        };
-        
-        autoSaveIndicator.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transition-all duration-300 ${colors[type]}`;
-        autoSaveIndicator.innerHTML = `
-            <div class="flex items-center gap-2">
-                ${type === 'saving' ? '<svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>' : ''}
-                ${type === 'success' ? '<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : ''}
-                <span class="text-sm font-medium">${message}</span>
-            </div>
-        `;
-        autoSaveIndicator.style.opacity = '1';
-        autoSaveIndicator.style.transform = 'translateY(0)';
-        
-        if (type === 'success') {
-            setTimeout(() => {
-                autoSaveIndicator.style.opacity = '0';
-                autoSaveIndicator.style.transform = 'translateY(-20px)';
-            }, 2000);
-        }
-    }
-    
-    // Save form data to localStorage
-    function autoSaveFormData() {
-        if (!form) return;
-        
-        showAutoSaveStatus('Saving...', 'saving');
-        
-        const formData = {};
-        const inputs = form.querySelectorAll('input:not([type="file"]), select, textarea');
-        
-        inputs.forEach(input => {
-            if (input.name && input.name !== '') {
-                if (input.type === 'checkbox') {
-                    formData[input.name] = input.checked;
-                } else if (input.type === 'radio') {
-                    if (input.checked) {
-                        formData[input.name] = input.value;
-                    }
-                } else {
-                    formData[input.name] = input.value;
-                }
-            }
-        });
-        
-        try {
-            localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(formData));
-            localStorage.setItem(AUTOSAVE_TIMESTAMP_KEY, new Date().toISOString());
-            console.log('Auto-saved form data:', formData);
-            showAutoSaveStatus('Draft saved', 'success');
-        } catch (e) {
-            console.error('Auto-save failed:', e);
-            showAutoSaveStatus('Save failed', 'error');
-        }
-    }
-    
-    // Restore form data from localStorage
-    function restoreAutoSavedData() {
-        const savedData = localStorage.getItem(AUTOSAVE_KEY);
-        const savedTime = localStorage.getItem(AUTOSAVE_TIMESTAMP_KEY);
-        
-        if (savedData && savedTime) {
-            const timeDiff = (new Date() - new Date(savedTime)) / 1000 / 60; // minutes
-            
-            // Only restore if saved within last 24 hours
-            if (timeDiff < 1440) {
-                console.log('Found auto-saved data from', Math.round(timeDiff), 'minutes ago');
-                
-                const formData = JSON.parse(savedData);
-                
-                Object.keys(formData).forEach(name => {
-                    const input = form.querySelector(`[name="${name}"]`);
-                    
-                    if (input) {
-                        if (input.type === 'checkbox') {
-                            input.checked = formData[name];
-                        } else if (input.type === 'radio') {
-                            if (input.value === formData[name]) {
-                                input.checked = true;
-                            }
-                        } else {
-                            input.value = formData[name];
-                        }
-                    }
-                });
-                
-                // Show notification
-                const notification = document.createElement('div');
-                notification.className = 'mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg';
-                notification.innerHTML = `
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-semibold text-blue-800">Draft Restored</p>
-                                <p class="text-xs text-blue-600 mt-1">Your previous work was automatically restored (saved ${Math.round(timeDiff)} minutes ago)</p>
-                            </div>
-                        </div>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-blue-400 hover:text-blue-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-                form.insertBefore(notification, form.firstChild);
-            }
-        }
-    }
-    
-    // Trigger auto-save on input change
-    if (form) {
-        form.addEventListener('input', function(e) {
-            // Debounce auto-save
-            clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(() => {
-                autoSaveFormData();
-            }, 1000); // Save 1 second after user stops typing
-        });
-        
-        form.addEventListener('change', function(e) {
-            // Immediate save for select/checkbox changes
-            if (e.target.tagName === 'SELECT' || e.target.type === 'checkbox') {
-                clearTimeout(autoSaveTimeout);
-                autoSaveFormData();
-            }
-        });
-    }
-    
-    // Restore auto-saved data on page load
-    restoreAutoSavedData();
-    
-    // Clear auto-save on successful form submission
-    form.addEventListener('submit', function() {
-        localStorage.removeItem(AUTOSAVE_KEY);
-        localStorage.removeItem(AUTOSAVE_TIMESTAMP_KEY);
-        console.log('Form submitted, auto-save cleared');
-    });
-});
-
-// Location button functionality
+// Location button functionality (for clearing location)
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Location button script loaded');
     
@@ -739,3 +677,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+

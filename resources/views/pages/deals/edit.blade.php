@@ -3,11 +3,12 @@
     <x-common.page-breadcrumb pageTitle="Edit Deal" />
     <x-common.component-card title="Edit Deal">
         <form action="{{ route('deals.update', $deal) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf @method('PUT')
+            @csrf 
+            @method('PUT')
             @include('pages.deals.partials.form', ['deal' => $deal, 'merchants' => $merchants, 'categories' => $categories])
             <div class="flex gap-4">
-                <button type="submit" class="px-6 py-2 bg-brand-500 text-white rounded-lg">Update</button>
-                <a href="{{ route('deals.index') }}" class="px-6 py-2 bg-gray-200 rounded-lg">Cancel</a>
+                <button type="submit" class="px-6 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors">Update</button>
+                <a href="{{ route('deals.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Cancel</a>
             </div>
         </form>
     </x-common.component-card>
@@ -21,15 +22,19 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-// Copy all the modal functions here (same as create.blade.php)
+// Modal map functionality
 let modalMap = null;
 let modalMarker = null;
 let selectedLat = null;
 let selectedLng = null;
 
 function openLocationModal() {
-    console.log('openLocationModal called');
-    document.getElementById('locationModal').classList.remove('hidden');
+    const modal = document.getElementById('locationModal');
+    if (!modal) {
+        alert('Error: Location modal not loaded. Please refresh the page.');
+        return;
+    }
+    modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     
     setTimeout(() => {
@@ -43,7 +48,9 @@ function openLocationModal() {
 }
 
 function closeLocationModal() {
-    document.getElementById('locationModal').classList.add('hidden');
+    const modal = document.getElementById('locationModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
     document.body.style.overflow = '';
 }
 
@@ -64,7 +71,39 @@ function addModalMarker(lat, lng) {
     modalMarker = L.marker([lat, lng]).addTo(modalMap);
     selectedLat = lat.toFixed(7);
     selectedLng = lng.toFixed(7);
+    reverseGeocode(lat, lng);
     updateModalLocationDisplay();
+}
+
+async function reverseGeocode(lat, lng) {
+    try {
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar,en`,
+            { headers: { 'Accept-Language': 'ar,en' } }
+        );
+        const data = await res.json();
+        if (data && data.address) {
+            const locationName = data.address.neighbourhood || 
+                                data.address.suburb || 
+                                data.address.quarter || 
+                                data.address.district || 
+                                data.address.city_district || 
+                                data.address.road || 
+                                'Damascus Location';
+            const area = data.address.suburb || 
+                        data.address.neighbourhood || 
+                        data.address.quarter || 
+                        data.address.district || 
+                        '';
+            document.getElementById('modal-location-name').value = locationName;
+            if (area) {
+                document.getElementById('modal-area').value = area;
+            }
+            updateModalLocationDisplay();
+        }
+    } catch (e) {
+        console.error('Reverse geocoding failed:', e);
+    }
 }
 
 function updateModalLocationDisplay() {
@@ -140,12 +179,10 @@ function confirmLocation() {
     document.getElementById('longitude-field').value = selectedLng;
     document.getElementById('location-name-field').value = locationName;
     document.getElementById('area-field').value = area;
-    const displayDiv = document.getElementById('location-display');
-    const displayText = document.getElementById('location-display-text');
-    const coordsText = document.getElementById('coordinates-display-text');
-    displayDiv.classList.remove('hidden');
-    displayText.textContent = locationName || 'Selected Location' + (area ? ' - ' + area : '');
-    coordsText.textContent = `${selectedLat}, ${selectedLng}`;
+    const coordinatesDisplay = document.getElementById('coordinates-display');
+    if (coordinatesDisplay) {
+        coordinatesDisplay.value = `${selectedLat}, ${selectedLng}`;
+    }
     closeLocationModal();
     showSuccessNotification();
 }
@@ -163,7 +200,10 @@ function clearLocation() {
     document.getElementById('longitude-field').value = '';
     document.getElementById('location-name-field').value = '';
     document.getElementById('area-field').value = '';
-    document.getElementById('location-display').classList.add('hidden');
+    const coordinatesDisplay = document.getElementById('coordinates-display');
+    if (coordinatesDisplay) {
+        coordinatesDisplay.value = '';
+    }
     const notification = document.createElement('div');
     notification.className = 'fixed top-4 right-4 z-50 bg-gray-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2';
     notification.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg><span>Location cleared</span>`;
@@ -184,7 +224,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectedLat && selectedLng) updateModalLocationDisplay();
         });
     }
-    console.log('✅ Modal functions loaded successfully');
+    
+    // Load existing coordinates into display field
+    const latField = document.getElementById('latitude-field');
+    const lngField = document.getElementById('longitude-field');
+    const coordsDisplay = document.getElementById('coordinates-display');
+    
+    if (latField && lngField && coordsDisplay && latField.value && lngField.value) {
+        coordsDisplay.value = `${latField.value}, ${lngField.value}`;
+    }
 });
 </script>
 
@@ -196,4 +244,3 @@ document.addEventListener('DOMContentLoaded', function() {
 .animate-fade-in { animation: fade-in 0.3s ease-out; }
 </style>
 @endpush
-

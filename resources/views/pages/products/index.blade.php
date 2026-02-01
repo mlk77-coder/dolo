@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
+                            {{ $category->name_en }}
                         </option>
                     @endforeach
                 </select>
@@ -86,7 +86,7 @@ use Illuminate\Support\Facades\Storage;
                                         <p class="text-gray-500 text-theme-sm">{{ $product->sku }}</p>
                                     </td>
                                     <td class="px-5 py-4">
-                                        <p class="text-gray-500 text-theme-sm">{{ $product->category->name }}</p>
+                                        <p class="text-gray-500 text-theme-sm">{{ $product->category->name_en ?? '—' }}</p>
                                     </td>
                                     <td class="px-5 py-4">
                                         <div>

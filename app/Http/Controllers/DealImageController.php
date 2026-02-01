@@ -45,5 +45,17 @@ class DealImageController extends Controller
 
         return redirect()->back()->with('success', 'Image deleted successfully.');
     }
+
+    public function setPrimary(DealImage $dealImage)
+    {
+        // Set all images for this deal to non-primary
+        DealImage::where('deal_id', $dealImage->deal_id)
+            ->update(['is_primary' => false]);
+
+        // Set this image as primary
+        $dealImage->update(['is_primary' => true]);
+
+        return redirect()->back()->with('success', 'Primary image updated successfully.');
+    }
 }
 
