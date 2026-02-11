@@ -26,16 +26,6 @@ class MenuHelper
                 'icon' => 'task',
                 'name' => __('menu.orders'),
                 'path' => '/orders',
-                'subItems' => [
-                    [
-                        'name' => 'All Orders',
-                        'path' => '/orders',
-                    ],
-                    [
-                        'name' => 'Abandoned Carts',
-                        'path' => '/orders/abandoned-carts',
-                    ],
-                ],
             ],
             [
                 'icon' => 'ecommerce',
@@ -59,13 +49,13 @@ class MenuHelper
             ],
             [
                 'icon' => 'email',
-                'name' => __('menu.notifications'),
-                'path' => '/notifications',
+                'name' => 'Email Marketing',
+                'path' => '/email-marketing',
             ],
             [
-                'icon' => 'ui-elements',
-                'name' => __('menu.advertisements'),
-                'path' => '/advertisements',
+                'icon' => 'chat',
+                'name' => __('menu.notifications'),
+                'path' => '/notifications',
             ],
             [
                 'icon' => 'ui-elements',

@@ -22,7 +22,7 @@ class OrderController extends Controller
 
         // Filter by status
         if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+            $query->where('order_status', $request->status);
         }
 
         $orders = $query->latest()->paginate(15);
@@ -32,17 +32,30 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load('user', 'items.product');
+        $order->load([
+            'user', 
+            'deal.merchant', 
+            'deal.primaryImage', 
+            'deal.images',
+            'statusHistory'
+        ]);
         return view('pages.orders.show', compact('order'));
     }
 
     public function update(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,processing,completed,canceled',
+            'status' => 'required|in:pending,confirmed,preparing,ready,delivered,cancelled',
         ]);
 
-        $order->update(['status' => $request->status]);
+        $oldStatus = $order->order_status;
+        $order->update([
+            'order_status' => $request->status,
+            'status' => $request->status, // Keep old column in sync
+        ]);
+
+        // Add to status history
+        $order->addStatusHistory($request->status, 'تم تحديث الحالة من لوحة التحكم');
 
         return redirect()->route('orders.show', $order)->with('success', 'Order status updated successfully.');
     }
@@ -60,7 +73,7 @@ class OrderController extends Controller
         }
 
         if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+            $query->where('order_status', $request->status);
         }
 
         $orders = $query->latest()->get();
@@ -75,7 +88,7 @@ class OrderController extends Controller
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
-            fputcsv($file, ['Order Number', 'Customer Name', 'Customer Email', 'Total', 'Status', 'Payment Method', 'Created At']);
+            fputcsv($file, ['Order Number', 'Customer Name', 'Customer Email', 'Total', 'Order Status', 'Payment Status', 'Payment Method', 'Created At']);
             
             foreach ($orders as $order) {
                 fputcsv($file, [
@@ -83,7 +96,8 @@ class OrderController extends Controller
                     $order->user->name ?? '',
                     $order->user->email ?? '',
                     $order->total ?? $order->total_price ?? 0,
-                    $order->status,
+                    $order->order_status ?? $order->status,
+                    $order->payment_status ?? '',
                     $order->payment_method ?? '',
                     $order->created_at->format('Y-m-d H:i:s'),
                 ]);

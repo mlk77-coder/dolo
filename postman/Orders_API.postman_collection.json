@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "order-api-collection",
+		"name": "Orders API",
+		"description": "Complete order and checkout system for Dolo deals app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Create Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"deal_id\": 7,\n    \"quantity\": 2,\n    \"payment_method\": \"cash_on_delivery\",\n    \"notes\": \"يرجى التوصيل بعد الساعة 5 مساءً\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/orders",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					]
+				},
+				"description": "Create a new order for a deal. Requires authentication.\n\n**Request Body:**\n- deal_id (required): ID of the deal\n- quantity (required): Number of items (1-10)\n- payment_method (required): cash_on_delivery, credit_card, or wallet\n- notes (optional): Delivery/order notes\n\n**Response:** Order details with order number"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get User Orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/orders?page=1&per_page=10&status=all",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number"
+						},
+						{
+							"key": "per_page",
+							"value": "10",
+							"description": "Items per page (max 50)"
+						},
+						{
+							"key": "status",
+							"value": "all",
+							"description": "Filter by status: all, pending, confirmed, preparing, ready, delivered, cancelled"
+						}
+					]
+				},
+				"description": "Get list of user's orders with pagination and filtering.\n\n**Query Parameters:**\n- page (optional): Page number (default: 1)\n- per_page (optional): Items per page (default: 10, max: 50)\n- status (optional): Filter by status (default: all)\n\n**Response:** List of orders with pagination"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get Order Details",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/orders/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"1"
+					]
+				},
+				"description": "Get detailed information about a specific order.\n\n**Path Parameter:**\n- id: Order ID\n\n**Response:** Complete order details including deal info, merchant info, location, and status history"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Cancel Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"reason\": \"لم أعد بحاجة للطلب\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/orders/1/cancel",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders",
+						"1",
+						"cancel"
+					]
+				},
+				"description": "Cancel an order. Only pending or confirmed orders can be cancelled.\n\n**Path Parameter:**\n- id: Order ID\n\n**Request Body:**\n- reason (optional): Cancellation reason\n\n**Response:** Confirmation with cancelled order details"
+			},
+			"response": []
+		},
+		{
+			"name": "5. Get Pending Orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/orders?status=pending",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "pending"
+						}
+					]
+				},
+				"description": "Get only pending orders"
+			},
+			"response": []
+		},
+		{
+			"name": "6. Get Delivered Orders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/orders?status=delivered",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "delivered"
+						}
+					]
+				},
+				"description": "Get only delivered orders"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "YOUR_AUTH_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,6 @@
+# Ignore APK files (they're usually large)
+*.apk
+
+# But keep this folder in git
+!.gitignore
+!README.md

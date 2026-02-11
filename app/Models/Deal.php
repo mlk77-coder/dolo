@@ -68,6 +68,11 @@ class Deal extends Model
         return $this->hasMany(DealImage::class);
     }
 
+    public function primaryImage()
+    {
+        return $this->hasOne(DealImage::class)->where('is_primary', true);
+    }
+
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);

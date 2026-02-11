@@ -53,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/customer/profile', [CustomerController::class, 'updateProfile']); // Alternative for form-data
     Route::get('/customer/order-history', [CustomerController::class, 'orderHistory']);
     
+    // Order management
+    Route::post('/orders', [\App\Http\Controllers\Api\OrderController::class, 'store']);
+    Route::get('/orders', [\App\Http\Controllers\Api\OrderController::class, 'index']);
+    Route::get('/orders/{id}', [\App\Http\Controllers\Api\OrderController::class, 'show']);
+    Route::post('/orders/{id}/cancel', [\App\Http\Controllers\Api\OrderController::class, 'cancel']);
+    
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
 });

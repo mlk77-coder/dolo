@@ -15,15 +15,13 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\MobileCarouselImageController;
 use App\Http\Controllers\AnalyticsDailyController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root to dashboard (or login if not authenticated)
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
-    return redirect()->route('login');
-});
+// Landing Page Routes (Public)
+Route::get('/', [LandingController::class, 'index'])->name('landing.index');
+Route::get('/privacy', [LandingController::class, 'privacy'])->name('landing.privacy');
+Route::get('/download-apk', [LandingController::class, 'downloadApk'])->name('landing.download-apk');
 
 // Language switcher
 Route::post('/language/switch', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');
@@ -67,7 +65,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('redemptions', RedemptionController::class);
     Route::resource('ratings', RatingController::class);
     Route::resource('codes', \App\Http\Controllers\CodeController::class);
+    
+    // Email Marketing Routes
+    Route::get('email-marketing', [\App\Http\Controllers\EmailMarketingController::class, 'index'])->name('email-marketing.index');
+    Route::get('email-marketing/create', [\App\Http\Controllers\EmailMarketingController::class, 'create'])->name('email-marketing.create');
+    Route::post('email-marketing/send', [\App\Http\Controllers\EmailMarketingController::class, 'send'])->name('email-marketing.send');
+    Route::post('email-marketing/preview', [\App\Http\Controllers\EmailMarketingController::class, 'preview'])->name('email-marketing.preview');
+    
+    // App Notifications (Mobile Push Notifications)
     Route::resource('notifications', AppNotificationController::class);
+    
     Route::resource('customers', \App\Http\Controllers\CustomerController::class);
     Route::get('customers/export/csv', [\App\Http\Controllers\CustomerController::class, 'exportCsv'])->name('customers.export-csv');
     Route::get('orders/abandoned-carts', [\App\Http\Controllers\AbandonedCartController::class, 'index'])->name('orders.abandoned-carts');
